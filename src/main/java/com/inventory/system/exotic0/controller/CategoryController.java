@@ -117,9 +117,9 @@ public class CategoryController {
 
         if(categoryImage != null && !categoryImage.isEmpty()) {
             byte[] bytes = categoryImage.getBytes();
-            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+//            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
             Image image = new Image();
-            image.setImage(blob);
+            image.setImage(bytes);
             Image savedImage = imageService.create(image);
             category.setImage(savedImage);
         }
@@ -137,9 +137,9 @@ public class CategoryController {
 
         if(categoryImage != null && !categoryImage.isEmpty()) {
             byte[] bytes = categoryImage.getBytes();
-            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+//            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
             Image image = new Image();
-            image.setImage(blob);
+            image.setImage(bytes);
             Image savedImage = imageService.create(image);
             category.setImage(savedImage);
         }
@@ -163,9 +163,9 @@ public class CategoryController {
             category.setName(name);
             if(categoryImage != null) {
                 byte[] bytes = categoryImage.getBytes();
-                Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+//                Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
                 Image image = new Image();
-                image.setImage(blob);
+                image.setImage(bytes);
                 Image savedImage = imageService.create(image);
                 category.setImage(savedImage);
                 deleteOldImage = true;

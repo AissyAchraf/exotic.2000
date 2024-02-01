@@ -23,7 +23,7 @@ public class ImageController {
     {
         Image image = imageService.viewById(id);
         byte [] imageBytes = null;
-        imageBytes = image.getImage().getBytes(1,(int) image.getImage().length());
+        imageBytes = image.getImage();
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
     }
 }

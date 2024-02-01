@@ -45,9 +45,9 @@ public class ProductController {
 
         if(productImage != null && !productImage.isEmpty()) {
             byte[] bytes = productImage.getBytes();
-            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+//            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
             Image image = new Image();
-            image.setImage(blob);
+            image.setImage(bytes);
             Image savedImage = imageService.create(image);
             product.setImage(savedImage);
         }
@@ -90,9 +90,9 @@ public class ProductController {
 
         if(variantImage != null && !variantImage.isEmpty()) {
             byte[] bytes = variantImage.getBytes();
-            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+//            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
             Image image = new Image();
-            image.setImage(blob);
+            image.setImage(bytes);
             Image savedImage = imageService.create(image);
             productVariant.setImage(savedImage);
         }
@@ -116,9 +116,9 @@ public class ProductController {
             Boolean deleteOldImage = false;
             if (variantImage != null && !variantImage.isEmpty()) {
                 byte[] bytes = variantImage.getBytes();
-                Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+//                Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
                 Image image = new Image();
-                image.setImage(blob);
+                image.setImage(bytes);
                 Image savedImage = imageService.create(image);
                 productVariant.setImage(savedImage);
                 deleteOldImage = true;

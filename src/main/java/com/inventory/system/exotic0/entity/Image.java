@@ -21,6 +21,6 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
-    private Blob image;
+    private byte[] image;
     private Date date = new Date();
 }
