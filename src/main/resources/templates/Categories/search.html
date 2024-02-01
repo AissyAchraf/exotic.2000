@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="header :: myHeader"></div>
+</head>
+<body class="sb-nav-fixed">
+<div th:replace="navbar :: myNavbar"></div>
+<div id="layoutSidenav">
+  <div th:replace="sidebar :: mySidebar"></div>
+  <!-- Sidebar ends here -->
+  <!-- Form starts from here -->
+  <div id="layoutSidenav_content">
+    <div class="container">
+      <p></p>
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item active">Catégories</li>
+      </ol>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5>Catégories</h5>
+            </div>
+            <div class="card-body">
+
+              <div class="row mb-3">
+                <div class="col-12">
+                  <button class="btn btn-success float-right" data-toggle="modal" data-target="#CreateCategoryModal">Ajouter une catégorie</button>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6">
+                  <form th:action="@{/categories}" class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+                    <div class="input-group">
+                      <input class="form-control" type="text" placeholder="Chercher une catégorie"
+                             aria-label="Search" aria-describedby="basic-addon2" name="categoryName" th:value="${categoryName}" />
+                      <div class="input-group-append">
+                        <button class="btn btn-secondary" type="submit">
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <table class="table table-hover">
+                <thead>
+                <tr>
+                  <th colspan="2">Catégorie</th>
+                  <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${categoryList}">
+                  <td style="width:10%">
+                    <img th:if="${category.image != null}" height="45px"  th:src="@{${'/display?id=' + category.image.id}}" th:alt="${category.name}">
+                  </td>
+                  <td>
+                    <a class="text-dark" th:text="${category.name}" th:href="@{/category(categoryId=${category.id})}"></a>
+                  </td>
+                  <td style="width:15%">
+                    <button class="btn btn-sm btn-secondary" data-toggle="modal" th:attr="data-target=${'#updateCategoryModal'+category.id}"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-sm btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteCategoryModal'+category.id}"><i class="fa fa-trash"></i></button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:replace="Categories/create :: createCategoryModal"></div>
+
+  <div th:each="category : ${categoryList}" th:remove="tag">
+    <div th:replace="Categories/update :: UpdateCategoryModal(category=${category})"></div>
+  </div>
+
+  <div th:each="category : ${categoryList}" th:remove="tag">
+    <div th:replace="Categories/delete :: DeleteCategoryModal(category=${category})"></div>
+  </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+</body>
+</html>

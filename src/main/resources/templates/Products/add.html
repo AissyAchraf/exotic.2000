@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="header :: myHeader"></div>
+</head>
+<body class="sb-nav-fixed">
+<div th:replace="navbar :: myNavbar"></div>
+<div id="layoutSidenav">
+    <div th:replace="sidebar :: mySidebar"></div>
+    <!-- Sidebar ends here -->
+    <!-- Form starts from here -->
+    <div id="layoutSidenav_content">
+        <div class="container">
+            <p></p>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                <li class="breadcrumb-item active">Ajouter un Produit</li>
+            </ol>
+            <!-- Text input-->
+            <div th:fragment="AddProductForm">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5>Ajouter un produit</h5>
+                        </div>
+                        <div class="card-body">
+                            <form class="needs-validation" th:action="@{/create-product}"
+                                  th:object="${newProduct}" method="post" enctype="multipart/form-data">
+                                <input name="parentId" th:value="${category.id}" hidden>
+                                <div class="alert alert-danger"
+                                     th:if="${#fields.hasErrors('name')}">
+                                    <p th:each="err : ${#fields.errors('name')}" th:text="${err}"></p>
+                                </div>
+                                <div class="success alert-success mb-3"
+                                     th:if="${successMessage}">
+                                    <p class="ml-3 py-1" th:text="${successMessage}"></p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Nom du produit</label>
+                                            <div class="inputGroupContainer">
+                                                <input name="name"
+                                                       placeholder="Entrer le nom du produit" th:field="*{name}"
+                                                       class="form-control" type="text" required>
+                                                <div class="alert alert-danger"
+                                                     th:if="${#fields.hasErrors('name')}"
+                                                     th:errors="*{name}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Photo du produit</label>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name="productImage" id="inputGroupFile01">
+                                                <label class="custom-file-label" for="inputGroupFile01">Choisir une photo</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label"></label>
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-success float-right">Ajouter</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://name.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="mySidebar">
+  <div id="layoutSidenav_nav">
+    <nav class="sb-sidenav accordion sb-sidenav-dark"
+         id="sidenavAccordion">
+      <div class="sb-sidenav-menu">
+        <div class="nav">
+          <a class="nav-link" href="/">
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-tachometer-alt"></i>
+            </div> Accueil
+          </a>
+
+          <a class="nav-link" href="/categories">
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-tachometer-alt"></i>
+            </div> Modifier les Catégories
+          </a>
+
+          <div class="sb-sidenav-menu-heading">Les Catégories</div>
+
+          <div th:each="category : ${categoriesList}" th:remove="tag">
+            <div th:replace="categoryTreePage :: categoryTree(category=${category})"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sb-sidenav-footer">
+        <div class="small">Logged in as:</div>
+        Inventory Manager
+      </div>
+    </nav>
+  </div>
+</div>
+</body>
+</html>

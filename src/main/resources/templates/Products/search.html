@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="header :: myHeader"></div>
+    <title th:text="${category.name}"></title>
+</head>
+<body class="sb-nav-fixed sb-sidenav-toggled">
+<div th:replace="navbar :: myNavbar"></div>
+<div id="layoutSidenav">
+    <div th:replace="sidebar :: mySidebar"></div>
+    <!-- Sidebar ends here -->
+    <div id="layoutSidenav_content">
+        <div class="row p-3">
+            <!--  Column of filters -->
+            <div class="col-lg-3 col-md-0">
+                <!--  Subcategories -->
+                <ul class="list-group mt-2" th:if="${#lists.size(category.components) > 0}">
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">Les sous-catégories</li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="subcategory : ${category.components}">
+                        <a class="text-dark" th:href="@{/search-category-products(categoryId=${subcategory.id})}">[[${subcategory.name}]]</a>
+                        <span class="badge badge-primary badge-pill">[[${subcategory.totalProductCount}]]</span>
+                    </li>
+                </ul>
+                <!--  Price -->
+                <ul class="list-group mt-2">
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">Prix</li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="entry : ${category.totalProductCountByPriceRange}">
+                        <a class="text-dark" href="" th:if="${entry.rangeKey == 0}" th:attr="disabled=${entry.productCount==0}">
+                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> 0-100
+                        </a>
+                        <a class="text-dark" href="" th:if="${entry.rangeKey == 1}" th:attr="disabled=${entry.productCount==0}">
+                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> 100-200
+                        </a>
+                        <a class="text-dark" href="" th:if="${entry.rangeKey == 2}" th:attr="disabled=${entry.productCount==0}">
+                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> 200-300
+                        </a>
+                        <a class="text-dark" href="" th:if="${entry.rangeKey == 3}" th:attr="disabled=${entry.productCount==0}">
+                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> Plus de 300
+                        </a>
+                        <a class="badge badge-primary badge-pill" th:attr="disabled=${entry.productCount==0}">[[${entry.productCount}]]</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--  Column of products -->
+            <div class="col-lg-9 col-md-12">
+                <div class="card p-2 mb-3">
+                    <div class="card-body" th:style="'height:200px; background-image:url('+@{/display(id=${category.image.id})}+'); background-repeat: no-repeat, repeat; background-size: cover; background-position: center;'">
+                        <sup><span class="badge badge-info px-3 py-1"><h4>[[${category.name}]]</h4></span></sup>
+                    </div>
+                    <p class="mt-2 mb-1"><strong>[[${#lists.size(productList)} + ' ' + ${#lists.size(productList) > 1 ? 'résultats' : 'résultat'}]]</strong></p>
+                </div>
+                <div class="row" id="productList">
+                    <div class="col-md-4 col-sm-12 col-xs-12 mb-3" th:each="product, iterStat : ${productList}">
+                        <div class="card p-3 h-100" id="productCard-[[${product.id}]]">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="image">
+                                        <a th:href="@{/product(productId=${product.id})}"><img th:src="@{${'/display?id=' + product.image.id}}" class="w-100"></a>
+                                    </div>
+                                </div>
+                                <a class="nav-link mt-auto" th:href="@{/product(productId=${product.id})}">
+                                    <div class="card-title text-center mt-2 mb-2 text-dark">
+                                        <h5><strong>[[${product.name}]]</strong></h5>
+                                        <span class="text-center" th:classappend="${product.isInStock ? 'text-success' : 'text-danger'}">[[${product.isInStock ? 'En stock' : 'Rebture de stock'}]]</span>
+                                    </div>
+                                    <p class="text-center text-secondary" th:if="${product.minSellingPrice != null}">à partir de <strong>[[${product.minSellingPrice}]] Dh</strong></p>
+                                    <p th:if="${product.minSellingPrice != null}"></p>
+                                </a>
+                                <button class="btn btn-secondary mt-auto"><i class="fas fa-shopping-cart"></i> Add to cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="py-4 bg-light mt-auto">
+            <div class="container-fluid">
+                <div
+                        class="d-flex align-items-center justify-content-between small">
+                    <div class="text-muted">Copyright &copy; IMS 2021</div>
+                    <div>
+                        <a href="#">Privacy Policy</a> &middot; <a href="#">Terms
+                        &amp; Conditions</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+</body>
+</html>

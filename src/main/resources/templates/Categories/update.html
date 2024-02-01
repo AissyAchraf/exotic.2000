@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Category</title>
+</head>
+<body>
+
+  <div th:fragment="UpdateCategoryModal(category)">
+    <div class="modal fade" th:id="${'updateCategoryModal'+category.id}" tabindex="-1" role="dialog" aria-labelledby="updateCategoryModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" th:id="${'updateCategoryModalTitle'+category.id}">Modifier une catégorie</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form th:action="@{/update-category}" method="post" enctype="multipart/form-data">
+            <div class="modal-body">
+              <input name="categoryId" th:value="${category.id}" hidden>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label class="control-label">Nom de la catégorie</label>
+                    <div class="inputGroupContainer">
+                      <input name="name"
+                             placeholder="Nom de la catégorie" th:value="${category.name}"
+                             class="form-control" type="text" required autofocus>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label class="control-label">Photo de catégorie</label>
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" name="categoryImage" th:id="${'inputGroupFileInUpdateModal'+category.id}">
+                      <label class="custom-file-label" th:attr="for=${'inputGroupFileInUpdateModal'+category.id}">Choisir une photo</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-success float-right">Modifier</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

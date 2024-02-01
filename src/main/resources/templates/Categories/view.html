@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="header :: myHeader"></div>
+</head>
+<body class="sb-nav-fixed">
+<div th:replace="navbar :: myNavbar"></div>
+<div id="layoutSidenav">
+  <div th:replace="sidebar :: mySidebar"></div>
+  <!-- Sidebar ends here -->
+  <!-- Form starts from here -->
+  <div id="layoutSidenav_content">
+    <div class="container">
+      <p></p>
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item active">Catégorie > <span th:text="${category.categoryPathName}" th:remove="tag"></span></li>
+      </ol>
+
+      <div class="row">
+        <!--    Add and Show Subcategory    -->
+        <div class="col-md-12 col-lg-6">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5>Créer une sous catégorie</h5>
+            </div>
+            <div class="card-body">
+              <form class="needs-validation" th:action="@{/create-subcategory}"
+                    th:object="${newCategory}" method="post" enctype="multipart/form-data">
+                <input name="parentId" th:value="${category.id}" hidden>
+                <div class="alert alert-danger"
+                     th:if="${#fields.hasErrors('name')}">
+                  <p th:each="err : ${#fields.errors('name')}" th:text="${err}"></p>
+                </div>
+                <div class="success alert-success mb-3"
+                     th:if="${successMessage}">
+                  <p class="ml-3 py-1" th:text="${successMessage}"></p>
+                </div>
+                <div class="col-12">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label class="control-label">Nom de catégorie</label>
+                        <input name="name"
+                               placeholder="Entrer le nom de catégorie" th:field="*{name}"
+                               class="form-control" type="text" required>
+                      </div>
+                      <div class="alert alert-danger"
+                           th:if="${#fields.hasErrors('name')}"
+                           th:errors="*{name}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label class="control-label">Photo de catégorie</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="categoryImage" id="inputGroupFile01">
+                          <label class="custom-file-label" for="inputGroupFile01">Choisir une photo</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-12 control-label"></label>
+                  <div class="col-md-12">
+                    <button type="submit" class="btn btn-success float-right">Créer</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+
+          </div>
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5>Les sous catégories de : <span th:text="${category.name}"></span></h5>
+            </div>
+            <div class="card-body">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th colspan="2">Catégorie</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${subCategoryList}">
+                  <td style="width:10%">
+                    <img th:if="${category.image != null}" height="45px"  th:src="@{${'/display?id=' + category.image.id}}" th:alt="${category.name}">
+                  </td>
+                  <td>
+                    <a class="text-dark" th:text="${category.name}" th:href="@{/category(categoryId=${category.id})}"></a>
+                  </td>
+                  <td style="width:15%">
+                    <ul class="navbar-nav ml-auto ml-md-0">
+                      <li class="nav-item dropdown"><a
+                              class="nav-link dropdown-toggle text-dark" id="userDropdown" href="#"
+                              role="button" data-toggle="dropdown" aria-haspopup="true"
+                              aria-expanded="false">Options</a>
+                        <div class="dropdown-menu"
+                             aria-labelledby="userDropdown">
+                          <a href="#" class="dropdown-item">Edit</a>
+                          <a href="#" class="dropdown-item">Delete</a>
+                        </div>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              <div class="form-group">
+                <label class="col-md-12 control-label"></label>
+                <div class="col-md-12">
+                  <a th:if="${0 < subCategoriesCurrentPage}" th:href="@{/category(categoryId=${category.id},subCategoriesPage=${subCategoriesCurrentPage - 1},size=${size})}"
+                     class="btn btn-success float-left"><i class="fas fa-arrow-left"></i> Précédent</a>
+                  <a th:if="${0 <= subCategoriesCurrentPage && subCategoriesCurrentPage < subCategoriesPages}" th:href="@{/category(categoryId=${category.id},subCategoriesPage=${subCategoriesCurrentPage + 1},size=${size})}"
+                     class="btn btn-success float-right">Suivant <i class="fas fa-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--   Add and Show Product     -->
+        <div class="col-md-12 col-lg-6">
+          <div th:replace="Products/add :: AddProductForm"></div>
+          <div th:replace="Products/cardSubproducts :: SubproductsForm"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+</body>
+</html>

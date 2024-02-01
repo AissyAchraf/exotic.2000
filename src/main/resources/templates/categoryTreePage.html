@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Arborescence de Catégories</title>
+</head>
+<body>
+
+<div th:fragment="categoryTree (category)">
+  <div class="nav-link" th:classappend="${category.components != null and #lists.size(category.components) > 0 ? 'py-0' : 'py-2'}">
+    <a class="nav-link" th:text="${category.name}" th:href="@{/search-category-products(categoryId=${category.id})}"></a>
+    <a class="nav-link collapsed ml-auto mr-0" href="#" data-toggle="collapse"
+       th:attr="data-target=${'#category'+category.id},aria-controls=${'collapseCategory'+category.id}" aria-expanded="false"
+       aria-controls="collapsePages">
+      <div class="sb-nav-link-icon">
+      </div>
+      <div th:if="${category.components != null and #lists.size(category.components) > 0}" class="sb-sidenav-collapse-arrow">
+        <i class="fas fa-angle-down"></i>
+      </div>
+    </a>
+  </div>
+  <div th:if="${category.components != null and #lists.size(category.components) > 0}" class="collapse" th:id="${'category'+category.id}"
+       aria-labelledby="headingTwo" th:attr="data-parent=${'#sidenavAccordion'+category.id}">
+    <nav class="sb-sidenav-menu-nested nav accordion"
+         th:attr="id=${'sidenavAccordion'+category.id}">
+      <div th:each="subcategory : ${category.components}" th:remove="tag">
+        <div th:insert="categoryTreePage :: categoryTree(${subcategory})"></div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+</body>
+</html>

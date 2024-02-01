@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="SubproductsForm">
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>Les produits de : <span th:text="${category.name}"></span></h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th colspan="2">Produit</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${productList}">
+                    <td style="width:10%">
+                        <img th:if="${product.image != null}" height="45px"  th:src="@{${'/display?id=' + product.image.id}}" th:alt="${product.name}">
+                    </td>
+                    <td>
+                        <a class="text-dark" th:text="${product.name}" th:href="@{/product(productId=${product.id})}"></a>
+                    </td>
+                    <td style="width:15%">
+                        <ul class="navbar-nav ml-auto ml-md-0">
+                            <li class="nav-item dropdown"><a
+                                    class="nav-link dropdown-toggle text-dark" id="userDropdown" href="#"
+                                    role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">Options</a>
+                                <div class="dropdown-menu"
+                                     aria-labelledby="userDropdown">
+                                    <a href="#" class="dropdown-item"> Edit </a>
+                                    <a href="#" class="dropdown-item"> Delete </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="form-group">
+                <label class="col-md-12 control-label"></label>
+                <div class="col-md-12">
+                    <a th:if="${0 < productsCurrentPage}" th:href="@{/category(categoryId=${category.id},productsPage=${productsCurrentPage - 1},size=${size})}"
+                       class="btn btn-success float-left"><i class="fas fa-arrow-left"></i> Précédent</a>
+                    <a th:if="${0 <= productsCurrentPage && productsCurrentPage < productsPages}" th:href="@{/category(categoryId=${category.id},productsPage=${productsCurrentPage + 1},size=${size})}"
+                       class="btn btn-success float-right">Suivant <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
