@@ -70,7 +70,7 @@ public class CategoryController {
             }
             model.addAttribute("category", category);
             model.addAttribute("productList", productList);
-            return "/Products/search";
+            return "Products/search";
         }
         return null;
     }
@@ -103,13 +103,13 @@ public class CategoryController {
         model.addAttribute("subCategoriesCurrentPage", subCategoriesPage);
         model.addAttribute("categoryName", categoryName);
         model.addAttribute("activePage", "Categories");
-        return "/Categories/view";
+        return "Categories/view";
     }
 
     @GetMapping("/create-category")
     public String formCreateCategory(Model model){
         model.addAttribute("category", new Category());
-        return "/Categories/create";
+        return "Categories/create";
     }
 
     @PostMapping("/create-category")

@@ -62,7 +62,7 @@ public class ProductController {
         Product product = productService.getById(productId);
         model.addAttribute("product", product);
         model.addAttribute("newProductVariant", new ProductVariant());
-        return "/Products/view";
+        return "Products/view";
     }
 
     @GetMapping("/delete-product")
