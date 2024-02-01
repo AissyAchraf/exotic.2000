@@ -49,7 +49,7 @@ public class CategoryController {
         model.addAttribute("size",size);
         model.addAttribute("pageCurrent", page);
         model.addAttribute("categoryName", categoryName);
-        return "/Categories/search";
+        return "Categories/search";
     }
 
     @GetMapping("/search-category-products")
