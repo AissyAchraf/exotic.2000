@@ -6,8 +6,11 @@ import com.inventory.system.exotic0.entity.Product;
 import com.inventory.system.exotic0.service.CategoryService;
 import com.inventory.system.exotic0.service.ImageService;
 import com.inventory.system.exotic0.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +24,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CategoryController {
@@ -34,42 +38,35 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public String search(Model model,
-                         @RequestParam(name="categoryName", defaultValue="") String categoryName,
-                         @RequestParam(name="page", defaultValue="0") int page,
-                         @RequestParam(name="size", defaultValue="10") int size) {
-        Page<Category> categoryPage = categoryService.searchRootCategories("%"+categoryName+"%", size, page);
-        List<Category> categoryList = categoryPage.getContent();
-        int pages = categoryPage.getTotalPages();
+                         @RequestParam(name="categoryName", defaultValue="") String categoryName){
+        List<Category> categoryList = categoryService.findRootCategories();
         if(!model.containsAttribute("newCategory")) {
             model.addAttribute("newCategory", new Category());
         }
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("activePage", "Categories");
-        model.addAttribute("pages", pages);
-        model.addAttribute("size",size);
-        model.addAttribute("pageCurrent", page);
-        model.addAttribute("categoryName", categoryName);
         return "Categories/search";
     }
 
     @GetMapping("/search-category-products")
     public String searchCategoryProducts(
             Model model,
-            @RequestParam(name="categoryId") Long categoryId,
-            @RequestParam(name = "minPrice", required = false) Integer minPrice,
-            @RequestParam(name = "maxPrice", required = false) Integer maxPrice
+            @RequestParam(name="categoryId") Long categoryId
     ) {
         Category category = categoryService.getById(categoryId);
         if(category != null) {
-            List<Product> productList = productService.findProductsByCategoryAndSubcategories(category);;
-
-            if(minPrice != null && maxPrice != null) {
-                productList = getProductsFilteredByPriceRange(productList, minPrice, maxPrice);
-                model.addAttribute("minPrice", minPrice);
-                model.addAttribute("maxPrice", maxPrice);
-            }
+            List<Category> subcategories = category.getComponents();
+//            Pageable paging = PageRequest.of(page - 1, size);
+//
+//            Page<Product> productPage = productService.findAllByCategoryAndSubcategories(category, subcategories, paging);
+//            List<Product> productList = productPage.getContent();
+            List<Product> productList = productService.findProductsByCategoryAndSubcategories(category);
             model.addAttribute("category", category);
             model.addAttribute("productList", productList);
+//            model.addAttribute("currentPage", productPage.getNumber() + 1);
+//            model.addAttribute("totalItems", productPage.getTotalElements());
+//            model.addAttribute("totalPages", productPage.getTotalPages());
+//            model.addAttribute("pageSize", size);
             return "Products/search";
         }
         return null;
@@ -113,11 +110,26 @@ public class CategoryController {
     }
 
     @PostMapping("/create-category")
-    public String processCreateCategory(Category category, RedirectAttributes attributes, @RequestParam(name = "categoryImage", required = false) MultipartFile categoryImage) throws SQLException, IOException {
+    public String processCreateCategory(
+            Category category,
+            RedirectAttributes attributes,
+            @RequestParam(name = "categoryImage", required = false) MultipartFile categoryImage,
+            @RequestParam(value = "parentId", required = false) Long parentId,
+            HttpServletRequest request
+            ) throws SQLException, IOException {
+
+        if(parentId != null) {
+            Category parent = categoryService.getById(parentId);
+            if(parent == null) {
+                attributes.addFlashAttribute("errorMessage", "La catégorie est introuvable!");
+                String referer = request.getHeader("Referer");
+                return "redirect:"+ referer;
+            }
+            category.setParent(parent);
+        }
 
         if(categoryImage != null && !categoryImage.isEmpty()) {
             byte[] bytes = categoryImage.getBytes();
-//            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
             Image image = new Image();
             image.setImage(bytes);
             Image savedImage = imageService.create(image);
@@ -126,28 +138,32 @@ public class CategoryController {
 
         categoryService.create(category);
         attributes.addFlashAttribute("successMessage", "Votre categorie : "+category.getName()+" est ajoutée avec succès");
-        return "redirect:/categories";
-    }
-
-    @PostMapping("/create-subcategory")
-    public String processCreateCategory(Category category, RedirectAttributes attributes, @RequestParam(name = "categoryImage", required = false) MultipartFile categoryImage, @RequestParam(name = "parentId") Long parentId) throws SQLException, IOException {
-
-        Category parent = categoryService.getById(parentId);
-        category.setParent(parent);
-
-        if(categoryImage != null && !categoryImage.isEmpty()) {
-            byte[] bytes = categoryImage.getBytes();
-//            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
-            Image image = new Image();
-            image.setImage(bytes);
-            Image savedImage = imageService.create(image);
-            category.setImage(savedImage);
+        if(category.getParent() == null) {
+            return "redirect:/categories";
+        } else {
+            return "redirect:/category?categoryId=" + category.getParent().getId();
         }
-
-        categoryService.create(category);
-        attributes.addFlashAttribute("successMessage", "Votre sous categorie : "+category.getName()+" est ajoutée avec succès");
-        return "redirect:/category?categoryId="+parent.getId();
     }
+
+//    @PostMapping("/create-subcategory")
+//    public String processCreateCategory(Category category, RedirectAttributes attributes, @RequestParam(name = "categoryImage", required = false) MultipartFile categoryImage, @RequestParam(name = "parentId") Long parentId) throws SQLException, IOException {
+//
+//        Category parent = categoryService.getById(parentId);
+//        category.setParent(parent);
+//
+//        if(categoryImage != null && !categoryImage.isEmpty()) {
+//            byte[] bytes = categoryImage.getBytes();
+////            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+//            Image image = new Image();
+//            image.setImage(bytes);
+//            Image savedImage = imageService.create(image);
+//            category.setImage(savedImage);
+//        }
+//
+//        categoryService.create(category);
+//        attributes.addFlashAttribute("successMessage", "Votre sous categorie : "+category.getName()+" est ajoutée avec succès");
+//        return "redirect:/category?categoryId="+parent.getId();
+//    }
 
     @PostMapping("/update-category")
     public String processUpdateCategory(
@@ -161,7 +177,7 @@ public class CategoryController {
         Boolean deleteOldImage = false;
         if(category != null)  {
             category.setName(name);
-            if(categoryImage != null) {
+            if(categoryImage != null && !categoryImage.isEmpty()) {
                 byte[] bytes = categoryImage.getBytes();
 //                Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
                 Image image = new Image();
@@ -179,10 +195,10 @@ public class CategoryController {
             if(category.getParent() == null) {
                 return "redirect:/categories";
             } else {
-                return "redirect:/category?categoryId=" + category.getId();
+                return "redirect:/category?categoryId=" + category.getParent().getId();
             }
         }
-        attributes.addFlashAttribute("successMessage", "La catégorie est introuvable!");
+        attributes.addFlashAttribute("errorMessage", "La catégorie est introuvable!");
         return "redirect:/error";
     }
 
@@ -194,7 +210,7 @@ public class CategoryController {
         Category category = categoryService.getById(categoryId);
         if(category != null) {
             Image image = category.getImage();
-            categoryService.delete(categoryId);
+            categoryService.delete(category);
             if(image != null) {
                 imageService.delete(image);
             }
@@ -202,10 +218,10 @@ public class CategoryController {
             if(category.getParent() == null) {
                 return "redirect:/categories";
             } else {
-                return "redirect:/category?categoryId=" + category.getId();
+                return "redirect:/category?categoryId=" + category.getParent().getId();
             }
         }
-        attributes.addFlashAttribute("successMessage", "La catégorie est introuvable!");
+        attributes.addFlashAttribute("errorMessage", "La catégorie est introuvable!");
         return "redirect:/error";
     }
 

@@ -3,6 +3,9 @@
 <head>
     <div th:replace="header :: myHeader"></div>
     <title th:text="${category.name}"></title>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <meta name="_csrf_parameter" content="${_csrf.parameterName}"/>
 </head>
 <body class="sb-nav-fixed sb-sidenav-toggled">
 <div th:replace="navbar :: myNavbar"></div>
@@ -10,7 +13,10 @@
     <div th:replace="sidebar :: mySidebar"></div>
     <!-- Sidebar ends here -->
     <div id="layoutSidenav_content">
-        <div class="row p-3">
+        <input type="text" th:value="${category.id}" id="CategoryId" hidden>
+        <main>
+            <div class="container-fluid">
+                <div class="row p-3">
             <!--  Column of filters -->
             <div class="col-lg-3 col-md-0">
                 <!--  Subcategories -->
@@ -27,19 +33,54 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center bg-light">Prix</li>
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         th:each="entry : ${category.totalProductCountByPriceRange}">
-                        <a class="text-dark" href="" th:if="${entry.rangeKey == 0}" th:attr="disabled=${entry.productCount==0}">
-                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> 0-100
-                        </a>
-                        <a class="text-dark" href="" th:if="${entry.rangeKey == 1}" th:attr="disabled=${entry.productCount==0}">
-                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> 100-200
-                        </a>
-                        <a class="text-dark" href="" th:if="${entry.rangeKey == 2}" th:attr="disabled=${entry.productCount==0}">
-                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> 200-300
-                        </a>
-                        <a class="text-dark" href="" th:if="${entry.rangeKey == 3}" th:attr="disabled=${entry.productCount==0}">
-                            <input type="checkbox" value="0-100" th:attr="disabled=${entry.productCount==0}"> Plus de 300
-                        </a>
-                        <a class="badge badge-primary badge-pill" th:attr="disabled=${entry.productCount==0}">[[${entry.productCount}]]</a>
+                        <div class="form-check text-dark" href="" th:if="${entry.rangeKey == 0}" >
+                            <input class="form-check-input" type="checkbox" value="0-99.99" th:attr="disabled=${entry.productCount==0}" id="checkbox1" data-id="priceRangeCheckbox">
+                            <label class="form-check-label" for="checkbox1">
+                                0-100
+                            </label>
+                        </div>
+                        <div class="form-check text-dark" href="" th:if="${entry.rangeKey == 1}" >
+                            <input class="form-check-input" type="checkbox" value="100-199.99" th:attr="disabled=${entry.productCount==0}" id="checkbox2" data-id="priceRangeCheckbox">
+                            <label class="form-check-label" for="checkbox2">
+                                100-200
+                            </label>
+                        </div>
+                        <div class="form-check text-dark" href="" th:if="${entry.rangeKey == 2}" >
+                            <input class="form-check-input" type="checkbox" value="200-299.99" th:attr="disabled=${entry.productCount==0}" id="checkbox3" data-id="priceRangeCheckbox">
+                            <label class="form-check-label" for="checkbox3">
+                                200-300
+                            </label>
+                        </div>
+                        <div class="form-check text-dark" href="" th:if="${entry.rangeKey == 3}" >
+                            <input class="form-check-input" type="checkbox" value="300-Infinity" th:attr="disabled=${entry.productCount==0}" id="checkbox4" data-id="priceRangeCheckbox">
+                            <label class="form-check-label" for="checkbox4">
+                                Plus de 300
+                            </label>
+                        </div>
+                        <div class="badge badge-primary badge-pill">[[${entry.productCount}]]</div>
+                    </li>
+                </ul>
+
+                <!--  En Stock -->
+                <ul class="list-group mt-2">
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">En Stock</li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="form-check text-dark" href="">
+                            <input class="form-check-input" type="checkbox" value="true" id="checkboxInStock" data-id="isInStockCheckbox">
+                            <label class="form-check-label" for="checkboxInStock">
+                                En Stock
+                            </label>
+                        </div>
+                        <div class="badge badge-primary badge-pill" id="NumberOfInStock"></div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="form-check text-dark" href="">
+                            <input class="form-check-input" type="checkbox" value="false" id="checkboxNotInStock" data-id="isInStockCheckbox">
+                            <label class="form-check-label" for="checkboxNotInStock">
+                                Rebture de Stock
+                            </label>
+                        </div>
+                        <div class="badge badge-primary badge-pill" id="NumberOfOutStock"></div>
                     </li>
                 </ul>
             </div>
@@ -50,48 +91,61 @@
                     <div class="card-body" th:style="'height:200px; background-image:url('+@{/display(id=${category.image.id})}+'); background-repeat: no-repeat, repeat; background-size: cover; background-position: center;'">
                         <sup><span class="badge badge-info px-3 py-1"><h4>[[${category.name}]]</h4></span></sup>
                     </div>
-                    <p class="mt-2 mb-1"><strong>[[${#lists.size(productList)} + ' ' + ${#lists.size(productList) > 1 ? 'résultats' : 'résultat'}]]</strong></p>
+                    <p class="mt-2 mb-1"><strong id="numberOfResults"></strong> <strong>résultats</strong></p>
                 </div>
-                <div class="row" id="productList">
-                    <div class="col-md-4 col-sm-12 col-xs-12 mb-3" th:each="product, iterStat : ${productList}">
-                        <div class="card p-3 h-100" id="productCard-[[${product.id}]]">
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <div class="image">
-                                        <a th:href="@{/product(productId=${product.id})}"><img th:src="@{${'/display?id=' + product.image.id}}" class="w-100"></a>
-                                    </div>
-                                </div>
-                                <a class="nav-link mt-auto" th:href="@{/product(productId=${product.id})}">
-                                    <div class="card-title text-center mt-2 mb-2 text-dark">
-                                        <h5><strong>[[${product.name}]]</strong></h5>
-                                        <span class="text-center" th:classappend="${product.isInStock ? 'text-success' : 'text-danger'}">[[${product.isInStock ? 'En stock' : 'Rebture de stock'}]]</span>
-                                    </div>
-                                    <p class="text-center text-secondary" th:if="${product.minSellingPrice != null}">à partir de <strong>[[${product.minSellingPrice}]] Dh</strong></p>
-                                    <p th:if="${product.minSellingPrice != null}"></p>
-                                </a>
-                                <button class="btn btn-secondary mt-auto"><i class="fas fa-shopping-cart"></i> Add to cart</button>
-                            </div>
-                        </div>
-                    </div>
+                <table class="table table-hover" id="ProductsDataTable" hidden>
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th class="no-sort">name</th>
+                        <th>isInStock</th>
+                        <th>minSellingPrice</th>
+                        <th class="no-sort">imageId</th>
+                        <th>variantes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${productList}">
+                        <td>[[${product.id}]]</td>
+                        <td>[[${product.name}]]</td>
+                        <td>[[${product.isInStock}]]</td>
+                        <td>[[${product.minSellingPrice}]]</td>
+                        <td>[[${product.image.id}]]</td>
+                        <td>[[${product.numberOfVariants}]]</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="inputs" hidden>
+                    <tbody><tr>
+                        <td>Minimum Price:</td>
+                        <td><input type="text" id="min" name="min"></td>
+                    </tr>
+                    <tr>
+                        <td>Maximum Price:</td>
+                        <td><input type="text" id="max" name="max"></td>
+                    </tr>
+                    <tr>
+                        <td>Stock:</td>
+                        <td><input type="text" id="IsInStock" name="isInStock"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row mt-3" id="productList">
+
                 </div>
             </div>
         </div>
-        <footer class="py-4 bg-light mt-auto">
-            <div class="container-fluid">
-                <div
-                        class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">Copyright &copy; IMS 2021</div>
-                    <div>
-                        <a href="#">Privacy Policy</a> &middot; <a href="#">Terms
-                        &amp; Conditions</a>
-                    </div>
-                </div>
             </div>
-        </footer>
+        </main>
+
+        <div th:replace="footer :: myFooter"></div>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
 <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
@@ -102,6 +156,195 @@
 <script
         src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
         crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"
+        crossorigin="anonymous"></script>
 <script th:src="@{/js/datatables-demo.js}"></script>
+<script>
+    $.fn.dataTableExt.afnFiltering.push(
+        function( oSettings, aData, iDataIndex ) {
+            var iMin = document.getElementById('min').value * 1;
+            var iMax = document.getElementById('max').value * 1;
+            var iVersion = aData[3] == "-" ? 0 : aData[3]*1;
+            if ( iMin == "" && iMax == "" )
+            {
+                return true;
+            }
+            else if ( iMin == "" && iVersion < iMax )
+            {
+                return true;
+            }
+            else if ( iMin <= iVersion && "" == iMax )
+            {
+                return true;
+            }
+            else if ( iMin <= iVersion && iVersion < iMax )
+            {
+                return true;
+            }
+            return false;
+        }
+    );
+
+    $.fn.dataTableExt.afnFiltering.push(
+        function( oSettings, aData, iDataIndex ) {
+            var isInStock = document.getElementById('IsInStock').value;
+            if(isInStock == "") return true;
+            if(isInStock == aData[2]) return true;
+            return false;
+        }
+    );
+
+    $(document).ready(function () {
+
+       var table = $('#ProductsDataTable').DataTable({
+            'columns': [
+                {
+                   'data': 'id'
+                },
+                {
+                   'data': 'name'
+                },
+                {
+                   'data': 'isInStock',
+                },
+                {
+                   'data': 'minSellingPrice',
+                },
+                {
+                   'data': 'imageId',
+                },
+                {
+                   'data': 'numberOfVariants'
+                },
+            ]
+       });
+
+       var data = table
+             .rows({search: 'applied'})
+             .data()
+             .toArray();
+
+       showProductList(data);
+       updateResultsNumber(data);
+
+       console.log(data);
+
+       table.on( 'search.dt', function () {
+            var data = table
+             .rows({search: 'applied'})
+             .data()
+             .toArray();
+           showProductList(data);
+           updateResultsNumber(data);
+
+        } );
+
+
+       // Function to update the data of results number
+       function updateResultsNumber(data) {
+
+           // Update total results number
+           var numberOfResults = $('#numberOfResults');
+           numberOfResults.empty();
+           numberOfResults.append(data.length);
+
+           // Update the stock results numbers
+           var numberOfInStock = $('#NumberOfInStock');
+           var numberOfOutStock = $('#NumberOfOutStock');
+
+           var productsInStock = data.filter(v => v.isInStock === "true");
+           var productsOutStock = data.filter(v => v.isInStock === "false");
+
+           numberOfInStock.empty();
+           numberOfOutStock.empty();
+           numberOfInStock.append(productsInStock.length);
+           numberOfOutStock.append(productsOutStock.length);
+
+
+       }
+
+       // Function to update the product list
+       function showProductList(productArray) {
+            var productListContainer = $("#productList");
+            productListContainer.empty(); // Clear existing content
+
+            // Loop through the product array and generate HTML for each product
+            $.each(productArray, function(index, product) {
+                var productCard = `
+                    <div class="col-md-4 col-sm-12 col-xs-12 mb-3">
+                        <div class="card p-3 h-100" id="productCard-${product.id}">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="image">
+                                        <a href="/product?productId=${product.id}">
+                                            <img src="/display?id=${product.imageId}" class="w-100">
+                                        </a>
+                                    </div>
+                                </div>
+                                <a class="nav-link mt-auto" href="/product?productId=${product.id}">
+                                    <div class="card-title text-center mt-2 mb-2 text-dark">
+                                        <h5><strong>${product.name}</strong></h5>
+                                        <span class="text-center ${product.isInStock == 'true' ? 'text-success' : 'text-danger'}">${product.isInStock == 'true' ? 'En stock' : 'Rebture de stock'}</span>
+                                    </div>
+                                    ${product.minSellingPrice != '' ? `<p class="text-center text-secondary">à partir de <strong>${product.minSellingPrice} Dh</strong></p>` : ''}
+                                </a>
+                                <button class="btn btn-secondary mt-auto"><i class="fas fa-shopping-cart"></i> Add to cart</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productListContainer.append(productCard); // Append the product card HTML to the product list container
+            });
+        }
+
+        $('#min').on("change" , function() { table.draw(); } );
+        $('#max').on("change" , function() { table.draw(); } );
+        $('#IsInStock').on("change" , function() { table.draw(); } );
+
+        $('input[data-id="priceRangeCheckbox"]').change(function () {
+
+            var checkedValues = $('input[data-id="priceRangeCheckbox"]:checked').map(function () {
+                return $(this).val().split('-').map(Number);
+            }).get();
+
+            const checkedValuesArray = $.makeArray(checkedValues);
+
+            var minPrice = Math.min.apply(Math,checkedValuesArray);
+            var maxPrice = Math.max.apply(Math,checkedValuesArray);
+
+            if(!isFinite(minPrice)) { minPrice = ""; }
+            if(!isFinite(maxPrice)) { maxPrice = ""; }
+
+            // Set the min and max input values
+            $('#min').val(minPrice);
+            $('#max').val(maxPrice);
+
+            // Trigger the change event to update the table
+            $('#min').change();
+            $('#max').change();
+        });
+
+        $('input[data-id="isInStockCheckbox"]').change(function () {
+
+            $('input[data-id="isInStockCheckbox"]:checked').each(function () {
+                console.log($(this).attr('id'));
+                console.log($(this).val());
+
+            });
+
+            var checkedValues = $('input[data-id="isInStockCheckbox"]:checked').map(function () {
+                return $(this).val().split().map(String);
+            }).get();
+
+            const checkedValuesArray = $.makeArray(checkedValues);
+
+            if(checkedValuesArray.length == 2 || checkedValuesArray.length == 0) { $('#IsInStock').val(''); }
+            else { $('#IsInStock').val(checkedValuesArray[0]); }
+
+            $('#IsInStock').change();
+        });
+ });
+</script>
 </body>
 </html>

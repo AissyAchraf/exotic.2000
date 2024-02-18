@@ -6,17 +6,18 @@ import com.inventory.system.exotic0.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-//    @Autowired
 
     @Override
     public Product create(Product product) {
@@ -39,6 +40,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product update(Product product) {
+        return productRepository.save(product);
+    }
+
+    @Override
     public void deleteById(Long id) {
         productRepository.deleteById(id);
     }
@@ -48,6 +54,11 @@ public class ProductServiceImpl implements ProductService {
         List<Product> allProducts = new ArrayList<>();
         getAllProductsRecursive(category, allProducts);
         return allProducts;
+    }
+
+    @Override
+    public Page<Product> findAllByCategoryAndSubcategories(Category category, List<Category> subcategories, Pageable pageable) {
+        return productRepository.findAllByCategoryAndSubCategories(category.getId(), pageable);
     }
 
     private void getAllProductsRecursive(Category category, List<Product> allProducts) {
@@ -61,4 +72,5 @@ public class ProductServiceImpl implements ProductService {
             }
         }
     }
+
 }

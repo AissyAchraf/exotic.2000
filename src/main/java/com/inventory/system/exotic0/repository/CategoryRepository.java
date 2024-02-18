@@ -20,6 +20,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     public List<Category> findRootCategories();
 
     @Query("select c from Category c where c.parent is null")
+    public Page<Category> findRootCategoriesByPage(Pageable pageable);
+
+    @Query("select c from Category c where c.parent is null")
     public Page searchRootCategories(@Param("name") String name, Pageable pageable);
 
     @Query("select c from Category c where c.parent.id = :parentId")
