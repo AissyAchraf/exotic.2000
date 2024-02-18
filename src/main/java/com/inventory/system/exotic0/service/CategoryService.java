@@ -14,6 +14,9 @@ public interface CategoryService {
 
     Page<Category> searchRootCategories(String name, int size, int page);
     public Category update(Category category);
-    public void delete(Long id);
+    public void delete(Category category);
     public List<Category> findAll();
+
+    public List<Category> findRootCategories();
+
 }

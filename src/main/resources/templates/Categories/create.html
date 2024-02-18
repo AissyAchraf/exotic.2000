@@ -17,6 +17,7 @@
                         </button>
                     </div>
                     <form th:action="@{/create-category}" th:object="${newCategory}" method="post" enctype="multipart/form-data">
+                        <input type="text" name="parentId" th:value="${category?.id}" hidden />
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-12">

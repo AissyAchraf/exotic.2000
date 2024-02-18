@@ -8,6 +8,7 @@ import com.inventory.system.exotic0.service.CategoryService;
 import com.inventory.system.exotic0.service.ImageService;
 import com.inventory.system.exotic0.service.ProductService;
 import com.inventory.system.exotic0.service.ProductVariantService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,6 +56,43 @@ public class ProductController {
         productService.create(product);
         attributes.addFlashAttribute("successMessage", "Votre produit : "+product.getName()+" est ajoutée avec succès");
         return "redirect:/category?categoryId="+parent.getId();
+    }
+
+    @PostMapping("/update-product")
+    public String processUpdateProduct(
+        @RequestParam("name") String name,
+        RedirectAttributes attributes,
+        @RequestParam(name = "productImage", required = false) MultipartFile productImage,
+        @RequestParam(name = "productId") Long productId,
+        HttpServletRequest request) throws IOException, SQLException {
+
+        Product product = productService.getById(productId);
+
+        Boolean deleteOldImage = false;
+        if(product != null)  {
+            Image oldImage = product.getImage();
+            product.setName(name);
+
+            if(productImage != null && !productImage.isEmpty()) {
+                byte[] bytes = productImage.getBytes();
+                Image image = new Image();
+                image.setImage(bytes);
+                Image savedImage = imageService.create(image);
+                product.setImage(savedImage);
+                deleteOldImage = true;
+            }
+
+            productService.update(product);
+            if(deleteOldImage && oldImage != null) {
+                imageService.delete(oldImage);
+            }
+            attributes.addFlashAttribute("successMessage", "Votre produit : "+product.getName()+" est modifié avec succès");
+            return "redirect:/category?categoryId=" + product.getCategory().getId();
+        }
+
+        attributes.addFlashAttribute("errorMessage", "Impossible de modifié le produit avec id : "+productId+", produit introuvable!");
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
     }
 
     @GetMapping("/product")

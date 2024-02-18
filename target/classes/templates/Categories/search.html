@@ -31,40 +31,27 @@
                 </div>
               </div>
 
-              <div class="row mb-3">
-                <div class="col-6">
-                  <form th:action="@{/categories}" class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-                    <div class="input-group">
-                      <input class="form-control" type="text" placeholder="Chercher une catégorie"
-                             aria-label="Search" aria-describedby="basic-addon2" name="categoryName" th:value="${categoryName}" />
-                      <div class="input-group-append">
-                        <button class="btn btn-secondary" type="submit">
-                          <i class="fas fa-search"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-
-              <table class="table table-hover">
+              <table class="table table-hover" id="CategoriesTable">
                 <thead>
                 <tr>
-                  <th colspan="2">Catégorie</th>
-                  <th>Actions</th>
+                  <th class="no-sort">Image</th>
+                  <th>Catégorie</th>
+                  <th class="no-sort text-right">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="category : ${categoryList}">
                   <td style="width:10%">
-                    <img th:if="${category.image != null}" height="45px"  th:src="@{${'/display?id=' + category.image.id}}" th:alt="${category.name}">
+                    <div th:style="'background-image : url('+@{${'/display?id=' + category.image.id}}+');background-position:center top;background-size:auto 100%;width:100px;height:50px;background-repeat: no-repeat;background-color:white;'"></div>
                   </td>
                   <td>
-                    <a class="text-dark" th:text="${category.name}" th:href="@{/category(categoryId=${category.id})}"></a>
+                    <a class="text-dark align-self-center" th:text="${category.name}" th:href="@{/category(categoryId=${category.id})}"></a>
                   </td>
-                  <td style="width:15%">
-                    <button class="btn btn-sm btn-secondary" data-toggle="modal" th:attr="data-target=${'#updateCategoryModal'+category.id}"><i class="fa fa-edit"></i></button>
-                    <button class="btn btn-sm btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteCategoryModal'+category.id}"><i class="fa fa-trash"></i></button>
+                  <td class="text-right">
+                    <div class="btn-group btn-group-toggle">
+                      <button class="btn btn-sm btn-secondary" data-toggle="modal" th:attr="data-target=${'#updateCategoryModal'+category.id}"><i class="fa fa-edit"></i></button>
+                      <button class="btn btn-sm btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteCategoryModal'+category.id}"><i class="fa fa-trash"></i></button>
+                    </div>
                   </td>
                 </tr>
                 </tbody>
@@ -74,6 +61,8 @@
         </div>
       </div>
     </div>
+
+    <div th:replace="footer :: myFooter"></div>
   </div>
 
   <div th:replace="Categories/create :: createCategoryModal"></div>
@@ -100,5 +89,16 @@
         src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
         crossorigin="anonymous"></script>
 <script th:src="@{/js/datatables-demo.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#CategoriesTable').DataTable({
+            "order": [1, 'asc'],
+            "columnDefs": [ {
+              "targets"  : 'no-sort',
+              "orderable": false,
+            }],
+        });
+    });
+</script>
 </body>
 </html>

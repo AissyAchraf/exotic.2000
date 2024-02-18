@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 public class Product extends CatalogueElement {
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductVariant> variants = new ArrayList<>();
 
     @ManyToOne
@@ -102,6 +102,13 @@ public class Product extends CatalogueElement {
         }
 
         return stockSumByPriceRangeList;
+    }
+
+    @Transient
+    public int getNumberOfVariants() {
+        if(variants == null) return 0;
+
+        return this.variants.size();
     }
 
     private int findPriceRangeIndex(int[] priceRanges, Float sellingPrice) {
