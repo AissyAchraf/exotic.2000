@@ -2,6 +2,7 @@ package com.inventory.system.exotic0.controller;
 
 import com.inventory.system.exotic0.entity.Image;
 import com.inventory.system.exotic0.service.ImageService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class ImageController {
 
     // display image
     @GetMapping("/display")
+    @Transactional
     public ResponseEntity<byte[]> displayImage(@RequestParam("id") long id) throws IOException, SQLException
     {
         Image image = imageService.viewById(id);
