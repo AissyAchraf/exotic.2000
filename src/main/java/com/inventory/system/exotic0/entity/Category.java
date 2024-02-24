@@ -26,7 +26,7 @@ public class Category extends CatalogueElement {
     @JoinColumn(name = "category_id")
     private List<Product> products;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Image image;
 
     @ManyToOne

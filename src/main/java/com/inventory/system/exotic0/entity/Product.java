@@ -22,7 +22,7 @@ public class Product extends CatalogueElement {
     @JsonIgnore
     private Category category;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Image image;
 
     @Transient
