@@ -117,16 +117,19 @@
                     </tr>
                     </tbody>
                 </table>
-                <table class="mt-3">
-                    <tbody>
-                        <tr>
-                            <td>Marque: </td>
-                            <td>
-                                <div id="my_selector"></div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <form class="form-inline" id="my_selector">
+                    <label class="my-1 mr-2">Marque: </label>
+                </form>
+<!--                <table class="mt-3">-->
+<!--                    <tbody>-->
+<!--                        <tr>-->
+<!--                            <td> </td>-->
+<!--                            <td>-->
+<!--                                <div id="my_selector"></div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                    </tbody>-->
+<!--                </table>-->
 
                 <table class="inputs" hidden>
                     <tbody><tr>
@@ -217,8 +220,8 @@
                     .columns( [2] )  // This is the hidden jurisdiction column index
                     .every(function () {
                         var column = this;
-                        var select = $('<select class="form-select"><option value=""></option></select>')
-                            .appendTo($( '#my_selector' ).empty())
+                        var select = $('<select class="custom-select my-1 mr-sm-2 w-25"><option value=""></option></select>')
+                            .appendTo($( '#my_selector' ))
                             .on('change', function () {
                                 var val = $.fn.dataTable.util.escapeRegex($(this).val());
 
