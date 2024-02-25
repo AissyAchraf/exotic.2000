@@ -17,6 +17,14 @@
         <li class="breadcrumb-item active">Catégories</li>
       </ol>
 
+      <ol th:if="${successMessage != null}" class="breadcrumb alert-success text-success">
+        <li class="breadcrumb-item" th:text="${successMessage}"></li>
+      </ol>
+
+      <ol th:if="${errorMessage != null}" class="breadcrumb alert-danger text-danger">
+        <li class="breadcrumb-item" th:text="${errorMessage}"></li>
+      </ol>
+
       <div class="row">
         <div class="col-12">
           <div class="card mb-3">
