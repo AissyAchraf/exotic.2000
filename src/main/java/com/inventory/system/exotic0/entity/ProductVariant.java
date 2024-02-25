@@ -33,7 +33,7 @@ public class ProductVariant {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Image image;
 
-    private String size;
+    private String variant;
 
     @Transient
     public boolean getIsInStock() {

@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -146,13 +145,13 @@ public class ProductController {
 
     @PostMapping("/update-variant")
     public String processUpdateVariant(@RequestParam("productVariantId") Long productVariantId,
-                                       @RequestParam("size") String size,
+                                       @RequestParam("variant") String variant,
                                        @RequestParam("barcode") String barcode,
                                        @RequestParam("variantImage") MultipartFile variantImage,
                                        RedirectAttributes attributes) throws IOException, SQLException {
         ProductVariant productVariant = productVariantService.getById(productVariantId);
         if(productVariant != null) {
-            productVariant.setSize(size);
+            productVariant.setVariant(variant);
             productVariant.setBarcode(barcode);
             Image oldImage = productVariant.getImage();
             Boolean deleteOldImage = false;
@@ -189,7 +188,7 @@ public class ProductController {
             if(variant.getImage() != null) {
                 imageService.delete(variant.getImage());
             }
-            attributes.addFlashAttribute("successMessage", "Votre variante : "+variant.getSize()+" est supprimée avec succès");
+            attributes.addFlashAttribute("successMessage", "Votre variante : "+variant.getVariant()+" est supprimée avec succès");
             return "redirect:/product?productId="+variant.getProduct().getId();
         }
         attributes.addFlashAttribute("errorMessage", "Variante introuvable!");
