@@ -25,6 +25,9 @@ public class Product extends CatalogueElement {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Image image;
 
+    @ManyToOne
+    private Brand brand;
+
     @Transient
     public List<Image> getVariantsImages() {
         List<Image> images =  new ArrayList<>();

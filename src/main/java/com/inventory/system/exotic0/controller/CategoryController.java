@@ -3,6 +3,7 @@ package com.inventory.system.exotic0.controller;
 import com.inventory.system.exotic0.entity.Category;
 import com.inventory.system.exotic0.entity.Image;
 import com.inventory.system.exotic0.entity.Product;
+import com.inventory.system.exotic0.service.BrandService;
 import com.inventory.system.exotic0.service.CategoryService;
 import com.inventory.system.exotic0.service.ImageService;
 import com.inventory.system.exotic0.service.ProductService;
@@ -31,6 +32,8 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private BrandService brandService;
     @Autowired
     private ImageService imageService;
     @Autowired
@@ -99,6 +102,7 @@ public class CategoryController {
         model.addAttribute("productsCurrentPage", productsPage);
         model.addAttribute("subCategoriesCurrentPage", subCategoriesPage);
         model.addAttribute("categoryName", categoryName);
+        model.addAttribute("brandList", brandService.findAll());
         model.addAttribute("activePage", "Categories");
         return "Categories/view";
     }

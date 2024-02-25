@@ -34,6 +34,17 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
+                                    <label class="control-label">Marque du produit</label>
+                                    <select class="form-control form-select" name="brandId" required>
+                                        <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>
+                                        <option th:if="${product.brand}" th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}" th:selected="${product.brand.id} == ${brand.id}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
                                     <label class="control-label">Photo du produit</label>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" name="categoryImage" th:id="${'inputGroupFileInUpdateModal'+product.id}">

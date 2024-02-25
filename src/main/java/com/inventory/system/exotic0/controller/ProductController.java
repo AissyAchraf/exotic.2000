@@ -1,13 +1,7 @@
 package com.inventory.system.exotic0.controller;
 
-import com.inventory.system.exotic0.entity.Category;
-import com.inventory.system.exotic0.entity.Image;
-import com.inventory.system.exotic0.entity.Product;
-import com.inventory.system.exotic0.entity.ProductVariant;
-import com.inventory.system.exotic0.service.CategoryService;
-import com.inventory.system.exotic0.service.ImageService;
-import com.inventory.system.exotic0.service.ProductService;
-import com.inventory.system.exotic0.service.ProductVariantService;
+import com.inventory.system.exotic0.entity.*;
+import com.inventory.system.exotic0.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +25,8 @@ public class ProductController {
     @Autowired
     private CategoryService categoryService;
     @Autowired
+    private BrandService brandService;
+    @Autowired
     private ImageService imageService;
     @Autowired
     private ProductVariantService productVariantService;
@@ -39,9 +35,13 @@ public class ProductController {
     public String processCreateProduct(Product product,
                                        RedirectAttributes attributes,
                                        @RequestParam(name = "productImage", required = false) MultipartFile productImage,
+                                       @RequestParam(name = "brandId") Long brandId,
                                        @RequestParam(name = "parentId") Long parentId) throws IOException, SQLException {
         Category parent = categoryService.getById(parentId);
+        Brand brand = brandService.getById(brandId);
+
         product.setCategory(parent);
+        product.setBrand(brand);
         product.setVariants(new ArrayList<>());
 
         if(productImage != null && !productImage.isEmpty()) {
@@ -64,12 +64,16 @@ public class ProductController {
         RedirectAttributes attributes,
         @RequestParam(name = "productImage", required = false) MultipartFile productImage,
         @RequestParam(name = "productId") Long productId,
+        @RequestParam(name = "brandId") Long brandId,
         HttpServletRequest request) throws IOException, SQLException {
 
         Product product = productService.getById(productId);
 
         Boolean deleteOldImage = false;
         if(product != null)  {
+            Brand brand = brandService.getById(brandId);
+            product.setBrand(brand);
+
             Image oldImage = product.getImage();
             product.setName(name);
 

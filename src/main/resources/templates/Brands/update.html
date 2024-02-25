@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Category</title>
+</head>
+<body>
+
+  <div th:fragment="UpdateBrandModal(brand)">
+    <div class="modal fade" th:id="${'updateBrandModal'+brand.id}" tabindex="-1" role="dialog" aria-labelledby="updateBrandModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" th:id="${'updateBrandModalTitle'+brand.id}">Modifier une marque</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form th:action="@{/update-brand}" method="post">
+            <div class="modal-body">
+              <input name="brandId" th:value="${brand.id}" hidden>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label class="control-label">Nom de la marque</label>
+                    <div class="inputGroupContainer">
+                      <input name="name"
+                             placeholder="Nom de la marque" th:value="${brand.name}"
+                             class="form-control" type="text" required autofocus>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-success float-right">Modifier</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
