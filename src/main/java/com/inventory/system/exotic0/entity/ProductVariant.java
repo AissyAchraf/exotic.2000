@@ -73,5 +73,16 @@ public class ProductVariant {
         }
         return totalQuantity;
     }
+
+    @Transient
+    public List<Stock> getAvailableStocks() {
+        List<Stock> availableStocks = new ArrayList<>();
+        for (Stock stock : this.getStocks()) {
+            if(stock.getCurrentQuantity() > 0) {
+                availableStocks.add(stock);
+            }
+        }
+        return availableStocks;
+    }
 }
 
