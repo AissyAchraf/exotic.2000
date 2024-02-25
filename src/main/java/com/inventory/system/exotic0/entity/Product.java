@@ -67,7 +67,7 @@ public class Product extends CatalogueElement {
     @Transient
     public Float getMinSellingPrice() {
         if(variants != null && !variants.isEmpty()) {
-            float minSellingPrice = variants.get(0).getMinSellingPrice();
+            Float minSellingPrice = variants.get(0).getMinSellingPrice();
             for (int i=1; i < variants.size(); i++) {
                 if(variants.get(i).getMinSellingPrice() == null) {
                     continue;

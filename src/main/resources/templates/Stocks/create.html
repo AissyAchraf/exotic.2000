@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="header :: myHeader"></div>
+</head>
+<body class="sb-nav-fixed">
+<div th:replace="navbar :: myNavbar"></div>
+<div id="layoutSidenav">
+    <div th:replace="sidebar :: mySidebar"></div>
+    <!-- Sidebar ends here -->
+    <!--  Create Product Modal  -->
+    <div th:fragment="CreateStockModal">
+        <div class="modal fade" id="CreateStockModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Ajouter un stock</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form th:action="@{/create-stock}" th:object="${newStock}" method="post">
+                        <input type="text" name="variantId" th:value="${productVariant?.id}" hidden />
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Date d'achat</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="date" name="purchaseDate"
+                                                   th:field="*{purchaseDate}"
+                                                   th:value="${#dates.format(purchaseDate, 'yyyy-MM-dd')}"
+                                                   class="form-control" required autofocus>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Quantité Initiale</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="number" min="1" name="quantity"
+                                                   th:field="*{quantity}"
+                                                   class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" hidden>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <div class="inputGroupContainer">
+                                            <input type="number" name="currentQuantity"
+                                                   th:field="*{currentQuantity}"
+                                                   th:value="${quantity}"
+                                                   class="form-control" hidden>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Prix d'achat (Unité)</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="number" step="0.01" min="0" name="purchasePrice"
+                                                   th:field="*{purchasePrice}"
+                                                   class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Prix de vente (Unité)</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="number" step="0.01" min="0" name="sellingPrice"
+                                                   th:field="*{sellingPrice}"
+                                                   class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="hasExpirationDate" th:field="*{hasExpirationDate}" id="defaultCheck1">
+                                        <label class="form-check-label" for="defaultCheck1">
+                                            Date d'expiration
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <div class="inputGroupContainer">
+                                            <input type="date" name="expirationDate" id="CreteStockModalExpirationDateInput"
+                                                   style="display:none"
+                                                   th:field="*{expirationDate}"
+                                                   th:value="${#dates.format(expirationDate, 'yyyy-MM-dd')}"
+                                                   class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="hasWeight" th:field="*{hasWeight}" id="defaultCheck2">
+                                        <label class="form-check-label" for="defaultCheck2">
+                                            Poids (g)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <div class="inputGroupContainer">
+                                            <input type="number" step="0.01" min="0" name="weight" id="CreteStockModalWeightInput"
+                                                   style="display: none"
+                                                   th:field="*{weight}"
+                                                   class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-success float-right">Créer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!--    <div id="layoutSidenav_content">-->
+<!--        <div class="container">-->
+<!--            <p></p>-->
+<!--            <ol class="breadcrumb mb-4">-->
+<!--                <li class="breadcrumb-item"><a href="/">Dashboard</a></li>-->
+<!--                <li class="breadcrumb-item active">Ajouter un Produit</li>-->
+<!--            </ol>-->
+<!--            &lt;!&ndash; Text input&ndash;&gt;-->
+<!--            <div th:fragment="AddProductForm">-->
+<!--                    <div class="card mb-3">-->
+<!--                        <div class="card-header">-->
+<!--                            <h5>Ajouter un produit</h5>-->
+<!--                        </div>-->
+<!--                        <div class="card-body">-->
+<!--                            <form class="needs-validation" th:action="@{/create-product}"-->
+<!--                                  th:object="${newProduct}" method="post" enctype="multipart/form-data">-->
+<!--                                <input name="parentId" th:value="${category.id}" hidden>-->
+<!--                                <div class="alert alert-danger"-->
+<!--                                     th:if="${#fields.hasErrors('name')}">-->
+<!--                                    <p th:each="err : ${#fields.errors('name')}" th:text="${err}"></p>-->
+<!--                                </div>-->
+<!--                                <div class="success alert-success mb-3"-->
+<!--                                     th:if="${successMessage}">-->
+<!--                                    <p class="ml-3 py-1" th:text="${successMessage}"></p>-->
+<!--                                </div>-->
+<!--                                <div class="row">-->
+<!--                                    <div class="col-12">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label class="control-label">Nom du produit</label>-->
+<!--                                            <div class="inputGroupContainer">-->
+<!--                                                <input name="name"-->
+<!--                                                       placeholder="Entrer le nom du produit" th:field="*{name}"-->
+<!--                                                       class="form-control" type="text" required>-->
+<!--                                                <div class="alert alert-danger"-->
+<!--                                                     th:if="${#fields.hasErrors('name')}"-->
+<!--                                                     th:errors="*{name}">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="row">-->
+<!--                                    <div class="col-12">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label class="control-label">Photo du produit</label>-->
+<!--                                            <div class="custom-file">-->
+<!--                                                <input type="file" class="custom-file-input" name="productImage" id="inputGroupFile01">-->
+<!--                                                <label class="custom-file-label" for="inputGroupFile01">Choisir une photo</label>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="form-group">-->
+<!--                                    <label class="col-md-12 control-label"></label>-->
+<!--                                    <div class="col-md-12">-->
+<!--                                        <button type="submit" class="btn btn-success float-right">Ajouter</button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+</body>
+</html>

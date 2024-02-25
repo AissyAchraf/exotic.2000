@@ -78,24 +78,24 @@
                                             <div th:each="variant : ${product.variants}" th:remove="tag">
                                                 <tr>
                                                     <td class="align-middle" th:attrappend="rowspan=${#lists.size(variant.stocks) > 0}?${#lists.size(variant.stocks)}">
-                                                        <strong><h5 th:text="${variant.size}"></h5></strong>
+                                                        <strong><h5 th:text="${variant.variant}"></h5></strong>
                                                     </td>
                                                     <div th:if="${#lists.isEmpty(variant.stocks)}" th:remove="tag">
                                                         <td>Pas de Stock</td>
                                                         <td>Pas de Stock</td>
                                                     </div>
                                                     <div th:if="${!#lists.isEmpty(variant.stocks)}" th:remove="tag">
-                                                        <td th:text="${variant.stocks[0].quantity + ' Unité(s)'}"></td>
+                                                        <td th:text="${variant.stocks[0].currentQuantity + ' Unité(s)'}"></td>
                                                         <td th:text="${variant.stocks[0].sellingPrice + ' Dh'}"></td>
                                                     </div>
                                                     <td class="align-middle" th:attrappend="rowspan=${#lists.size(variant.stocks) > 0}?${#lists.size(variant.stocks)}">
                                                         <button class="btn btn-sm btn-secondary" data-toggle="modal" th:attr="data-target=${'#updateVariantModal'+variant.id}"><i class="fa fa-edit"></i></button>
                                                         <button class="btn btn-sm btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteVariantModal'+variant.id}"><i class="fa fa-trash"></i></button>
-                                                        <button class="btn btn-sm btn-info"><i class="fa fa-cubes"></i></button>
+                                                        <a th:href="@{/stock(variantId=${variant.id})}" class="btn btn-sm btn-info"><i class="fa fa-cubes"></i></a>
                                                     </td>
                                                 </tr>
                                                 <tr th:if="${!#lists.isEmpty(variant.stocks) && #lists.size(variant.stocks) > 1 && iter.index > 0}" th:each="stock,iter : ${variant.stocks}">
-                                                    <td th:text="${stock.quantity + ' Unité(s)'}"></td>
+                                                    <td th:text="${stock.currentQuantity + ' Unité(s)'}"></td>
                                                     <td th:text="${stock.sellingPrice + ' Dh'}"></td>
                                                 </tr>
                                             </div>
@@ -116,6 +116,8 @@
                 </div>
             </div>
         </div>
+
+        <div th:replace="footer :: myFooter"></div>
     </div>
 
     <div th:each="variant : ${product.variants}" th:remove="tag">
@@ -146,10 +148,10 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label class="control-label">Taille de la variante</label>
+                                        <label class="control-label">La variante</label>
                                         <div class="inputGroupContainer">
-                                            <input name="size"
-                                                   placeholder="Entrer la taille de la variante" th:value="${variant.size}"
+                                            <input name="variant"
+                                                   placeholder="Entrer la variante" th:value="${variant.variant}"
                                                    class="form-control" type="text" required>
                                         </div>
                                     </div>
@@ -188,7 +190,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>Voulez vous vraiment supprimer la variante [[${variant.size}]]?</p>
+                        <p>Voulez vous vraiment supprimer la variante [[${variant.variant}]]?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
@@ -230,14 +232,14 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label class="control-label">Taille de la variante</label>
+                                    <label class="control-label">La variante</label>
                                     <div class="inputGroupContainer">
-                                        <input name="size"
-                                               placeholder="Entrer la taille de la variante" th:field="*{size}"
+                                        <input name="variant"
+                                               placeholder="Entrer la variante" th:field="*{variant}"
                                                class="form-control" type="text" required>
                                         <div class="alert alert-danger"
-                                             th:if="${#fields.hasErrors('size')}"
-                                             th:errors="*{size}">
+                                             th:if="${#fields.hasErrors('variant')}"
+                                             th:errors="*{variant}">
                                         </div>
                                     </div>
                                 </div>
@@ -264,7 +266,7 @@
         </div>
     </div>
 
-    <div th:replace="footer :: myFooter"></div>
+
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         crossorigin="anonymous"></script>

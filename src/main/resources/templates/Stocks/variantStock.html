@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="header :: myHeader"></div>
+</head>
+<body class="sb-nav-fixed">
+<div th:replace="navbar :: myNavbar"></div>
+<div id="layoutSidenav">
+  <div th:replace="sidebar :: mySidebar"></div>
+  <!-- Sidebar ends here -->
+  <!-- Form starts from here -->
+  <div id="layoutSidenav_content">
+    <div class="container">
+      <p></p>
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item active">Stock</li>
+      </ol>
+
+      <ol th:if="${successMessage != null}" class="breadcrumb alert-success text-success">
+        <li class="breadcrumb-item" th:text="${successMessage}"></li>
+      </ol>
+
+      <ol th:if="${errorMessage != null}" class="breadcrumb alert-danger text-danger">
+        <li class="breadcrumb-item" th:text="${errorMessage}"></li>
+      </ol>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5>Stock de [[${productVariant.product.name}]] - [[${productVariant.variant}]]</h5>
+            </div>
+            <div class="card-body">
+
+              <div class="row mb-3">
+                <div class="col-12">
+                  <button class="btn btn-success float-right" data-toggle="modal" data-target="#CreateStockModal">Ajouter un stock</button>
+                </div>
+              </div>
+
+              <table class="table table-hover" id="StocksTable">
+                <thead>
+                <tr>
+                  <th>Date Achat</th>
+                  <th>Quantité Initiale</th>
+                  <th>Quantité</th>
+                  <th>Prix Achat (Unité)</th>
+                  <th>Prix Vente (Unité)</th>
+                  <th>Date Expiration</th>
+                  <th class="no-sort text-right">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="stock : ${stockList}">
+                  <td>[[${stock.purchaseDate}]]</td>
+                  <td>[[${stock.quantity}]] unité(s)</td>
+                  <td>[[${stock.currentQuantity}]] unité(s)</td>
+                  <td>[[${stock.purchasePrice}]]</td>
+                  <td>[[${stock.sellingPrice}]]</td>
+                  <td>[[${stock.expirationDate}]]</td>
+                  <td class="text-right">
+                    <div class="btn-group btn-group-toggle">
+                      <button class="btn btn-sm btn-secondary" data-toggle="modal" th:attr="data-target=${'#updateStockModal'+stock.id}"><i class="fa fa-edit"></i></button>
+                      <button class="btn btn-sm btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteStockModal'+stock.id}"><i class="fa fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="footer :: myFooter"></div>
+  </div>
+
+  <div th:replace="Stocks/create :: CreateStockModal"></div>
+
+  <div th:each="stock : ${stockList}" th:remove="tag">
+    <div th:replace="Stocks/update :: UpdateStockModal(stock=${stock})"></div>
+  </div>
+
+<!--  <div th:each="category : ${categoryList}" th:remove="tag">-->
+<!--    <div th:replace="Categories/delete :: DeleteCategoryModal(category=${category})"></div>-->
+<!--  </div>-->
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#StocksTable').DataTable({
+            "order": [0, 'desc'],
+            "columnDefs": [ {
+              "targets"  : 'no-sort',
+              "orderable": false,
+            }],
+        });
+    });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      $('#defaultCheck1').change(function(){
+          if($(this).is(':checked')){
+              $('#CreteStockModalExpirationDateInput').css("display", "block");
+              $('#CreteStockModalExpirationDateInput').prop("required", true);
+          } else {
+              $('#CreteStockModalExpirationDateInput').css("display", "none");
+              $('#CreteStockModalExpirationDateInput').prop("required", false);
+              $('#CreteStockModalExpirationDateInput').val('');
+          }
+      });
+
+      $('#defaultCheck2').change(function(){
+          if($(this).is(':checked')){
+              $('#CreteStockModalWeightInput').css("display", "block");
+              $('#CreteStockModalWeightInput').prop("required", true);
+          } else {
+              $('#CreteStockModalWeightInput').css("display", "none");
+              $('#CreteStockModalWeightInput').prop("required", false);
+              $('#CreteStockModalWeightInput').val(0.0);
+          }
+      });
+
+      $('[id^="defaultCheckExpDateUpdateStockModal"]').change(function(){
+          var id = $(this).data('stockid');
+          if($(this).is(':checked')){
+              $('#UpdateStockModalExpirationDateInput'+id).css("display", "block");
+              $('#UpdateStockModalExpirationDateInput'+id).prop("required", true);
+          } else {
+              $('#UpdateStockModalExpirationDateInput'+id).css("display", "none");
+              $('#UpdateStockModalExpirationDateInput'+id).prop("required", false);
+              $('#UpdateStockModalExpirationDateInput'+id).val('');
+          }
+      });
+
+      $('[id^="defaultCheckWeightUpdateStockModal"]').change(function(){
+          var id = $(this).data('stockid');
+          if($(this).is(':checked')){
+              $('#UpdateStockModalWeightInput'+id).css("display", "block");
+              $('#UpdateStockModalWeightInput'+id).prop("required", true);
+          } else {
+              $('#UpdateStockModalWeightInput'+id).css("display", "none");
+              $('#UpdateStockModalWeightInput'+id).prop("required", false);
+              $('#UpdateStockModalWeightInput'+id).val(0.0);
+          }
+      });
+  });
+</script>
+</body>
+</html>

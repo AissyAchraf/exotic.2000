@@ -33,14 +33,14 @@ public class ProductVariant {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Image image;
 
-    private String size;
+    private String variant;
 
     @Transient
     public boolean getIsInStock() {
         boolean inStock = false;
         if(stocks != null) {
             for (Stock stock : stocks) {
-                if(stock.getQuantity() > 0) {
+                if(stock.getCurrentQuantity() > 0) {
                     inStock = true;
                     break;
                 }
@@ -68,7 +68,7 @@ public class ProductVariant {
         int totalQuantity = 0;
         if (stocks != null && !stocks.isEmpty()) {
             for (Stock stock : stocks) {
-                totalQuantity += stock.getQuantity();
+                totalQuantity += stock.getCurrentQuantity();
             }
         }
         return totalQuantity;
