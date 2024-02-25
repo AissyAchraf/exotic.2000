@@ -85,17 +85,17 @@
                                                         <td>Pas de Stock</td>
                                                     </div>
                                                     <div th:if="${!#lists.isEmpty(variant.stocks)}" th:remove="tag">
-                                                        <td th:text="${variant.stocks[0].quantity + ' Unité(s)'}"></td>
+                                                        <td th:text="${variant.stocks[0].currentQuantity + ' Unité(s)'}"></td>
                                                         <td th:text="${variant.stocks[0].sellingPrice + ' Dh'}"></td>
                                                     </div>
                                                     <td class="align-middle" th:attrappend="rowspan=${#lists.size(variant.stocks) > 0}?${#lists.size(variant.stocks)}">
                                                         <button class="btn btn-sm btn-secondary" data-toggle="modal" th:attr="data-target=${'#updateVariantModal'+variant.id}"><i class="fa fa-edit"></i></button>
                                                         <button class="btn btn-sm btn-danger" data-toggle="modal" th:attr="data-target=${'#deleteVariantModal'+variant.id}"><i class="fa fa-trash"></i></button>
-                                                        <button class="btn btn-sm btn-info"><i class="fa fa-cubes"></i></button>
+                                                        <a th:href="@{/stock(variantId=${variant.id})}" class="btn btn-sm btn-info"><i class="fa fa-cubes"></i></a>
                                                     </td>
                                                 </tr>
                                                 <tr th:if="${!#lists.isEmpty(variant.stocks) && #lists.size(variant.stocks) > 1 && iter.index > 0}" th:each="stock,iter : ${variant.stocks}">
-                                                    <td th:text="${stock.quantity + ' Unité(s)'}"></td>
+                                                    <td th:text="${stock.currentQuantity + ' Unité(s)'}"></td>
                                                     <td th:text="${stock.sellingPrice + ' Dh'}"></td>
                                                 </tr>
                                             </div>

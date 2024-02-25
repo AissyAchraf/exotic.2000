@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="header :: myHeader"></div>
+</head>
+<body class="sb-nav-fixed">
+<div th:replace="navbar :: myNavbar"></div>
+<div id="layoutSidenav">
+    <div th:replace="sidebar :: mySidebar"></div>
+    <!-- Sidebar ends here -->
+    <!--  Create Product Modal  -->
+    <div th:fragment="UpdateStockModal(stock)">
+        <div class="modal fade" th:id="${'updateStockModal'+stock.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un stock</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form th:action="@{/update-stock}" method="post">
+                        <input type="text" name="id" th:value="${stock.id}" hidden />
+                        <input type="text" name="variantId" th:value="${productVariant?.id}" hidden />
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Date d'achat</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="date" name="purchaseDate"
+                                                   th:value="${#dates.format(stock.purchaseDate, 'yyyy-MM-dd')}"
+                                                   class="form-control" required autofocus>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Quantité Initiale</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="number" min="1" name="quantity"
+                                                   th:value="${stock.quantity}"
+                                                   class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Quantité</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="number" min="0" th:max="${stock.quantity}" name="currentQuantity"
+                                                   th:value="${stock.currentQuantity}"
+                                                   class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Prix d'achat (Unité)</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="number" step="0.01" min="0" name="purchasePrice"
+                                                   th:value="${stock.purchasePrice}"
+                                                   class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Prix de vente (Unité)</label>
+                                        <div class="inputGroupContainer">
+                                            <input type="number" step="0.01" min="0" name="sellingPrice"
+                                                   th:value="${stock.sellingPrice}"
+                                                   class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="hasExpirationDate" th:value="${stock.hasExpirationDate}"
+                                               th:id="${'defaultCheckExpDateUpdateStockModal'+stock.id}" th:attr="data-stockid=${stock.id}">
+                                        <label class="form-check-label" th:id="${'defaultCheckExpDateUpdateStockModal'+stock.id}">
+                                            Date d'expiration
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <div class="inputGroupContainer">
+                                            <input type="date" name="expirationDate" th:id="${'UpdateStockModalExpirationDateInput'+stock.id}"
+                                                   th:style="${stock.hasExpirationDate == true ? 'display:block' : 'display:none'}"
+                                                   th:value="${#dates.format(stock.expirationDate, 'yyyy-MM-dd')}"
+                                                   class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="hasWeight" th:id="${'defaultCheckWeightUpdateStockModal'+stock.id}"
+                                               th:value="${stock.hasWeight}"
+                                               th:attr="data-stockid=${stock.id}">
+                                        <label class="form-check-label" th:for="${'defaultCheckWeightUpdateStockModal'+stock.id}">
+                                            Poids (g)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <div class="inputGroupContainer">
+                                            <input type="number" step="0.01" min="0" name="weight"
+                                                   th:id="${'UpdateStockModalWeightInput'+stock.id}"
+                                                   style="display: none"
+                                                   th:value="${stock.weight}"
+                                                   class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-success float-right">Modifier</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+</body>
+</html>

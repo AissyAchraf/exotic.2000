@@ -77,7 +77,7 @@
                         <div class="form-check text-dark" href="">
                             <input class="form-check-input" type="checkbox" value="false" id="checkboxNotInStock" data-id="isInStockCheckbox">
                             <label class="form-check-label" for="checkboxNotInStock">
-                                Rebture de Stock
+                                Rupture de Stock
                             </label>
                         </div>
                         <div class="badge badge-primary badge-pill" id="NumberOfOutStock"></div>
@@ -328,7 +328,7 @@
                                     <div class="card-title text-center mt-2 mb-2 text-dark">
                                         <p>${product.brand}</p>
                                         <h5><strong>${product.name}</strong></h5>
-                                        <span class="text-center ${product.isInStock == 'true' ? 'text-success' : 'text-danger'}">${product.isInStock == 'true' ? 'En stock' : 'Rebture de stock'}</span>
+                                        <span class="text-center ${product.isInStock == 'true' ? 'text-success' : 'text-danger'}">${product.isInStock == 'true' ? 'En stock' : 'Rupture de stock'}</span>
                                     </div>
                                     ${product.minSellingPrice != '' ? `<p class="text-center text-secondary">à partir de <strong>${product.minSellingPrice} Dh</strong></p>` : ''}
                                 </a>

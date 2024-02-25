@@ -40,7 +40,7 @@ public class ProductVariant {
         boolean inStock = false;
         if(stocks != null) {
             for (Stock stock : stocks) {
-                if(stock.getQuantity() > 0) {
+                if(stock.getCurrentQuantity() > 0) {
                     inStock = true;
                     break;
                 }
@@ -68,7 +68,7 @@ public class ProductVariant {
         int totalQuantity = 0;
         if (stocks != null && !stocks.isEmpty()) {
             for (Stock stock : stocks) {
-                totalQuantity += stock.getQuantity();
+                totalQuantity += stock.getCurrentQuantity();
             }
         }
         return totalQuantity;
