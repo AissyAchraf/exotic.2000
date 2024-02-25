@@ -326,6 +326,7 @@
                                 </div>
                                 <a class="nav-link mt-auto" href="/product?productId=${product.id}">
                                     <div class="card-title text-center mt-2 mb-2 text-dark">
+                                        <p>${product.brand}</p>
                                         <h5><strong>${product.name}</strong></h5>
                                         <span class="text-center ${product.isInStock == 'true' ? 'text-success' : 'text-danger'}">${product.isInStock == 'true' ? 'En stock' : 'Rebture de stock'}</span>
                                     </div>
