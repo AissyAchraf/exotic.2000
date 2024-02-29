@@ -24,3 +24,5 @@
 $('.modal').on('shown.bs.modal', function() {
   $(this).find('[autofocus]').focus();
 });
+
+$('.toast').toast('show');
