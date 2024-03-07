@@ -23,7 +23,7 @@ public class Order {
     private LocalDateTime orderDate;
     private int orderNum;
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.Pending;
+    private OrderStatus status = OrderStatus.InProgress;
     private Float totalAmount;
     @Enumerated(EnumType.STRING)
     private OrderType type = OrderType.Sale;

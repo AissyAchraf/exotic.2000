@@ -44,7 +44,7 @@ public class OrderController {
         } else {
             order.setOrderNum(1);
         }
-        order.setStatus(OrderStatus.Pending);
+        order.setStatus(OrderStatus.InProgress);
         order.setType(OrderType.Sale);
         order.setOrderDate(LocalDateTime.now());
         Order savedOrder = orderService.save(order);
