@@ -15,11 +15,11 @@ public class OrderLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "productVariantCode", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "productVariantId", referencedColumnName = "id", insertable = false, updatable = false)
     private ProductVariant productVariant;
     private Float unitPrice;
     @ManyToOne
-    @JoinColumn(name = "productVariantCode", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "orderId", referencedColumnName = "id", insertable = false, updatable = false)
     private Order order;
     private int quantity;
     private Float originalAmount;

@@ -7,6 +7,8 @@ import com.inventory.system.exotic0.repository.ProductVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductVariantServiceImpl implements ProductVariantService {
 
@@ -35,5 +37,10 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     @Override
     public ProductVariant getById(Long id) {
         return productVariantRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<ProductVariant> findAll() {
+        return productVariantRepository.findAll();
     }
 }
