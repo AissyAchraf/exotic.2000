@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https:/www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+
+    <div th:replace="header :: myHeader"></div>
+</head>
+<body class="sb-nav-fixed">
+    <div th:replace="navbar :: myNavbar"></div>
+    <div id="layoutSidenav">
+        <div th:replace="sidebar :: mySidebar"></div>
+        <!-- Sidebar ends here -->
+        <!-- Form starts from here -->
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+
+                    <p></p>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Commande n° [[${#numbers.formatInteger(order.orderNum, 4)}]]</li>
+                    </ol>
+
+                    <ol th:if="${successMessage != null}" class="breadcrumb alert-success text-success">
+                        <li class="breadcrumb-item" th:text="${successMessage}"></li>
+                    </ol>
+
+                    <ol th:if="${errorMessage != null}" class="breadcrumb alert-danger text-danger">
+                        <li class="breadcrumb-item" th:text="${errorMessage}"></li>
+                    </ol>
+
+                    <ol th:if="${orderNumMessage != null}" class="breadcrumb alert-secondary text-black">
+                        <li class="breadcrumb-item"><strong th:text="${orderNumMessage}"></strong></li>
+                    </ol>
+
+                    <button class="btn btn-success float-right mb-5" data-toggle="modal" data-target="#CreateOrderLineModal">Show Create Order Line Modal</button>
+
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="card">
+                                <div class="card-header">Produits</div>
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th hidden></th>
+                                                <th></th>
+                                                <th>Produit</th>
+                                                <th>Marque</th>
+                                                <th>Prix</th>
+                                                <th>Status</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <div th:each="variant : ${variants}" th:remove="tag">
+                                                <tr>
+                                                    <td hidden>[[${variant.id}]]</td>
+                                                    <td style="width:10%" class="align-middle" th:attrappend="rowspan=${#lists.size(variant.availableStocks) > 0}?${#lists.size(variant.availableStocks)}">
+                                                        <div th:style="'background-image : url('+@{${'/display?id=' + variant.image.id}}+');background-position:center top;background-size:auto 100%;width:100px;height:50px;background-repeat: no-repeat;background-color:white;'"></div>
+                                                    </td>
+                                                    <td class="align-middle" th:attrappend="rowspan=${#lists.size(variant.availableStocks) > 0}?${#lists.size(variant.availableStocks)}">
+                                                        [[${variant.product.name}]] - [[${variant.variant}]]
+                                                    </td>
+                                                    <td class="align-middle" th:attrappend="rowspan=${#lists.size(variant.availableStocks) > 0}?${#lists.size(variant.availableStocks)}">
+                                                        [[${variant.product.brand.name}]]
+                                                    </td>
+                                                    <div th:if="${!#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
+                                                        <td class="align-middle" th:text="${variant.availableStocks[0].sellingPrice + ' Dh'}"></td>
+                                                    </div>
+                                                    <div th:if="${#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
+                                                        <td class="text-danger align-middle" colspan="3">Rupture de Stock</td>
+                                                    </div>
+                                                    <div th:if="${!#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
+                                                        <td class="text-success align-middle">En Stock</td>
+                                                    </div>
+                                                    <div th:if="${!#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-success createOrderLineBtn"
+                                                                    th:attr="data-variant-id=${variant.id},data-variant-name=${variant.product.name +' - '+ variant.variant},data-variant-selling-price=${variant.availableStocks[0].sellingPrice}">+</button>
+                                                        </td>
+                                                    </div>
+                                                </tr>
+                                                <tr th:if="${!#lists.isEmpty(variant.availableStocks) && #lists.size(variant.availableStocks) > 1 && iter.index > 0}" th:each="stock,iter : ${variant.availableStocks}">
+                                                    <td class="align-middle" th:text="${stock.sellingPrice + ' Dh'}"></td>
+                                                </tr>
+                                            </div>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-12">
+                            <div class="card">
+                                <div class="card-header">Détails de la commande n° [[${#numbers.formatInteger(order.orderNum, 4)}]]</div>
+                                <div class="card-body">
+                                    <table>
+                                        <tr><td>Date : [[${#temporals.format(order.orderDate, 'dd-MM-yyyy HH:mm')}]]</td></tr>
+                                        <tr><td>Identifiant de la commande : #[[${order.id}]]</td></tr>
+                                        <tr><td>Numéro de la commande : [[${#numbers.formatInteger(order.orderNum, 4)}]]</td></tr>
+                                    </table>
+
+                                    <table class="table table-striped mt-5">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th>Qte</th>
+                                                <th>Prix Unité</th>
+                                                <th>Total</th>
+                                                <th scope="col" class="NoPrint">
+                                                    <button type="button" class="btn btn-sm btn-success" onclick="BtnAdd()">+</button>
+
+                                                </th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="TBody">
+                                            <tr id="TRow" class="d-none">
+                                                <td><input type="text" class="form-control" ></td>
+                                                <td><input type="number" class="form-control text-end" name="qty" onchange="Calc(this);"></td>
+                                                <td><input type="number" class="form-control text-end" name="rate"  onchange="Calc(this);"></td>
+                                                <td><input type="number" class="form-control text-end" name="amt" value="0" disabled=""></td>
+                                                <td class="NoPrint"><button type="button" class="btn btn-sm btn-danger" onclick="BtnDel(this)">X</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+
+            <div th:replace="footer :: myFooter"></div>
+
+        </div>
+
+        <div th:replace="Orders/createOrderLine :: createOrderLineModal"></div>
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/scripts.js}"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/datatables-demo.js}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+<script>
+    function BtnAdd()
+    {
+        /*Add Button*/
+        var v = $("#TRow").clone().appendTo("#TBody") ;
+        $(v).find("input").val('');
+        $(v).removeClass("d-none");
+    }
+
+    function BtnDel(v)
+    {
+        /*Delete Button*/
+           $(v).parent().parent().remove();
+           GetTotal();
+
+            $("#TBody").find("tr").each(
+            function(index)
+            {
+               $(this).find("th").first().html(index);
+            }
+
+           );
+    }
+
+    function Calc(v)
+    {
+        /*Detail Calculation Each Row*/
+        var index = $(v).parent().parent().index();
+
+        var qty = document.getElementsByName("qty")[index].value;
+        var rate = document.getElementsByName("rate")[index].value;
+
+        var amt = qty * rate;
+        document.getElementsByName("amt")[index].value = amt;
+
+        GetTotal();
+    }
+
+    function GetTotal()
+    {
+        /*Footer Calculation*/
+
+        var sum=0;
+        var amts =  document.getElementsByName("amt");
+
+        for (let index = 0; index < amts.length; index++)
+        {
+            var amt = amts[index].value;
+            sum = +(sum) +  +(amt) ;
+        }
+
+        document.getElementById("FTotal").value = sum;
+
+        var gst =  document.getElementById("FGST").value;
+        var net = +(sum) + +(gst);
+        document.getElementById("FNet").value = net;
+
+    }
+</script>
+<script>
+  $(document).ready(function(){
+      $('#IsHasDiscountCheckbox').change(function(){
+          if($(this).is(':checked')){
+              $('#DiscountPercentageInputRow').css("display", "block");
+              $('#DiscountInput').prop("required", true);
+          } else {
+              $('#DiscountPercentageInputRow').css("display", "none");
+              $('#DiscountInput').prop("required", false);
+              $('#DiscountInput').val('');
+          }
+      });
+  });
+</script>
+</body>
+</html>

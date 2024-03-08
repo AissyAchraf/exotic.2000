@@ -24,3 +24,58 @@
 $('.modal').on('shown.bs.modal', function() {
   $(this).find('[autofocus]').focus();
 });
+
+$('.toast').toast('show');
+
+// Add product to Order script
+
+/*!
+   * On click .createOrderLineBtn get the product details
+   * Set those details in the create order line Modal
+   * Show the create order line Modal
+
+*/
+$('.createOrderLineBtn').click(function(){
+
+    $("#VariantIdInput").val($(this).data('variant-id'));
+    $("#VariantNameInput").val($(this).data('variant-name'));
+    $("#VariantSellingPriceInput").val($(this).data('variant-selling-price'));
+
+    updateTotal();
+    updateToPay();
+});
+
+
+/*!
+ * Function to update total value based on quantity and unit price
+ */
+function updateTotal() {
+    let quantity = $("#QuantityInput").val();
+    let unitPrice = $("#VariantSellingPriceInput").val();
+    $("#TotalInput").val(quantity * unitPrice);
+}
+
+$('#QuantityInput').on('change', updateTotal);
+$('#QuantityInput').on('change', updateToPay);
+
+/*!
+ * Function to update total to pay value based on quantity, unit price, if it is gift and discount
+ */
+function updateToPay() {
+    let quantity = $("#QuantityInput").val();
+    let unitPrice = $("#VariantSellingPriceInput").val();
+    let total = $("#TotalInput").val();
+
+    if($("#IsGiftCheckbox").is(':checked')) {
+        $("#ToPayInput").val(0);
+    } else if($("#IsHasDiscountCheckbox").is(':checked')) {
+        let discountPercentage = $("#DiscountInput").val();
+        let discountedTotal = total * (1 - discountPercentage / 100); // Convert percentage to decimal
+        $("#ToPayInput").val(discountedTotal);
+    } else {
+        $("#ToPayInput").val(total);
+    }
+}
+
+$('#IsGiftCheckbox').on('change', updateToPay);
+$('#DiscountInput').on('change', updateToPay);
