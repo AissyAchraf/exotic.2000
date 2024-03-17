@@ -33,7 +33,7 @@
           <div class="sb-sidenav-menu-heading">Les Catégories</div>
 
           <div th:each="category : ${categoriesList}" th:remove="tag">
-            <div th:replace="categoryTreePage :: categoryTree(category=${category})"></div>
+                <div th:replace="categoryTreePage :: categoryTree(category=${category})"></div>
           </div>
         </div>
       </div>
