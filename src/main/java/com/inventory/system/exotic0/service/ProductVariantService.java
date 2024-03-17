@@ -11,4 +11,5 @@ public interface ProductVariantService {
     public ProductVariant update(ProductVariant productVariant);
     public ProductVariant getById(Long id);
     public List<ProductVariant> findAll();
+    public ProductVariant getByBarcode(String barcode);
 }

@@ -33,65 +33,46 @@
                         <li class="breadcrumb-item"><strong th:text="${orderNumMessage}"></strong></li>
                     </ol>
 
-                    <button class="btn btn-success float-right mb-5" data-toggle="modal" data-target="#CreateOrderLineModal">Show Create Order Line Modal</button>
+                    <div class="row">
+                        <button class="btn btn-success float-right mb-5" data-toggle="modal" data-target="#CreateOrderLineModal">Show Create Order Line Modal</button>
+                    </div>
 
                     <div class="row">
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-4 col-12">
                             <div class="card">
-                                <div class="card-header">Produits</div>
+                                <div class="card-header">Produit</div>
                                 <div class="card-body">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th hidden></th>
-                                                <th></th>
-                                                <th>Produit</th>
-                                                <th>Marque</th>
-                                                <th>Prix</th>
-                                                <th>Status</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <div th:each="variant : ${variants}" th:remove="tag">
-                                                <tr>
-                                                    <td hidden>[[${variant.id}]]</td>
-                                                    <td style="width:10%" class="align-middle" th:attrappend="rowspan=${#lists.size(variant.availableStocks) > 0}?${#lists.size(variant.availableStocks)}">
-                                                        <div th:style="'background-image : url('+@{${'/display?id=' + variant.image.id}}+');background-position:center top;background-size:auto 100%;width:100px;height:50px;background-repeat: no-repeat;background-color:white;'"></div>
-                                                    </td>
-                                                    <td class="align-middle" th:attrappend="rowspan=${#lists.size(variant.availableStocks) > 0}?${#lists.size(variant.availableStocks)}">
-                                                        [[${variant.product.name}]] - [[${variant.variant}]]
-                                                    </td>
-                                                    <td class="align-middle" th:attrappend="rowspan=${#lists.size(variant.availableStocks) > 0}?${#lists.size(variant.availableStocks)}">
-                                                        [[${variant.product.brand.name}]]
-                                                    </td>
-                                                    <div th:if="${!#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
-                                                        <td class="align-middle" th:text="${variant.availableStocks[0].sellingPrice + ' Dh'}"></td>
+
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="control-label">Barcode</label>
+                                                    <div class="inputGroupContainer">
+                                                        <input type="text" class="form-control" id="BarcodeInput"/>
                                                     </div>
-                                                    <div th:if="${#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
-                                                        <td class="text-danger align-middle" colspan="3">Rupture de Stock</td>
-                                                    </div>
-                                                    <div th:if="${!#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
-                                                        <td class="text-success align-middle">En Stock</td>
-                                                    </div>
-                                                    <div th:if="${!#lists.isEmpty(variant.availableStocks)}" th:remove="tag">
-                                                        <td>
-                                                            <button type="button" class="btn btn-sm btn-success createOrderLineBtn"
-                                                                    th:attr="data-variant-id=${variant.id},data-variant-name=${variant.product.name +' - '+ variant.variant},data-variant-selling-price=${variant.availableStocks[0].sellingPrice}">+</button>
-                                                        </td>
-                                                    </div>
-                                                </tr>
-                                                <tr th:if="${!#lists.isEmpty(variant.availableStocks) && #lists.size(variant.availableStocks) > 1 && iter.index > 0}" th:each="stock,iter : ${variant.availableStocks}">
-                                                    <td class="align-middle" th:text="${stock.sellingPrice + ' Dh'}"></td>
-                                                </tr>
+                                                </div>
                                             </div>
-                                        </tbody>
-                                    </table>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="control-label">Quantité</label>
+                                                    <div class="inputGroupContainer">
+                                                        <input type="number" step="1" min="1" value="1" class="form-control" id="QuantityInput" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-success">Ajouter</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-8 col-12">
                             <div class="card">
                                 <div class="card-header">Détails de la commande n° [[${#numbers.formatInteger(order.orderNum, 4)}]]</div>
                                 <div class="card-body">
@@ -101,29 +82,42 @@
                                         <tr><td>Numéro de la commande : [[${#numbers.formatInteger(order.orderNum, 4)}]]</td></tr>
                                     </table>
 
-                                    <table class="table table-striped mt-5">
+<!--                                    <table class="table table-striped mt-5">-->
+<!--                                        <thead>-->
+<!--                                            <tr>-->
+<!--                                                <th>Produit</th>-->
+<!--                                                <th>Qte</th>-->
+<!--                                                <th>Prix Unité</th>-->
+<!--                                                <th>Total</th>-->
+<!--                                                <th scope="col" class="NoPrint">-->
+<!--                                                    <button type="button" class="btn btn-sm btn-success" onclick="BtnAdd()">+</button>-->
+
+<!--                                                </th>-->
+<!--                                            </tr>-->
+<!--                                        </thead>-->
+
+<!--                                        <tbody id="TBody">-->
+<!--                                            <tr id="TRow" class="d-none">-->
+<!--                                                <td><input type="text" class="form-control" ></td>-->
+<!--                                                <td><input type="number" class="form-control text-end" name="qty" onchange="Calc(this);"></td>-->
+<!--                                                <td><input type="number" class="form-control text-end" name="rate"  onchange="Calc(this);"></td>-->
+<!--                                                <td><input type="number" class="form-control text-end" name="amt" value="0" disabled=""></td>-->
+<!--                                                <td class="NoPrint"><button type="button" class="btn btn-sm btn-danger" onclick="BtnDel(this)">X</button></td>-->
+<!--                                            </tr>-->
+<!--                                        </tbody>-->
+<!--                                    </table>-->
+
+                                    <table id="tbl-order" class="table table-striped mt-5">
                                         <thead>
                                             <tr>
+                                                <th hidden>Id</th>
                                                 <th>Produit</th>
                                                 <th>Qte</th>
-                                                <th>Prix Unité</th>
-                                                <th>Total</th>
-                                                <th scope="col" class="NoPrint">
-                                                    <button type="button" class="btn btn-sm btn-success" onclick="BtnAdd()">+</button>
-
-                                                </th>
+                                                <th>Prix</th>
+                                                <th></th>
+                                                <th></th>
                                             </tr>
                                         </thead>
-
-                                        <tbody id="TBody">
-                                            <tr id="TRow" class="d-none">
-                                                <td><input type="text" class="form-control" ></td>
-                                                <td><input type="number" class="form-control text-end" name="qty" onchange="Calc(this);"></td>
-                                                <td><input type="number" class="form-control text-end" name="rate"  onchange="Calc(this);"></td>
-                                                <td><input type="number" class="form-control text-end" name="amt" value="0" disabled=""></td>
-                                                <td class="NoPrint"><button type="button" class="btn btn-sm btn-danger" onclick="BtnDel(this)">X</button></td>
-                                            </tr>
-                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -140,7 +134,7 @@
         <div th:replace="Orders/createOrderLine :: createOrderLineModal"></div>
     </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
@@ -223,6 +217,47 @@
           }
       });
   });
+</script>
+<script>
+    var orderId = $("#orderIdInput").val();
+    getall();
+
+    //View Order Line
+    function getall()
+    {
+        $('#tbl-order').dataTable().fnDestroy();
+        $.ajax({
+            url:"localhost:8081/api/orders/getOrderLines/1",
+            type: "GET",
+            dataType: "JSON",
+            success:function(data)
+            {
+                $("#tbl-order").dataTable({
+                    "data": data,
+                    "columns": [
+                        { data: 'Id' },
+                        { data: 'Produit' },
+                        { data: 'Qte' },
+                        { data: 'Prix' },
+                        {
+                            data: null,
+                            render : function(data, type, full, meta)
+                            {
+                                return '<button class="btn btn-success">Edit</button>';
+                            }
+                        },
+                        {
+                            data: null,
+                            render : function(data, type, full, meta)
+                            {
+                                return '<button class="btn btn-danger">Delete</button>';
+                            }
+                        }
+                    ]
+                });
+            }
+        });
+    }
 </script>
 </body>
 </html>

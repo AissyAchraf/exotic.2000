@@ -53,7 +53,7 @@ public class OrderController {
         order.setType(OrderType.Sale);
         order.setOrderDate(LocalDateTime.now());
         Order savedOrder = orderService.save(order);
-        attributes.addFlashAttribute("orderNumMessage", "Une nouvelle commande a été créé avec le numéro : "+savedOrder.getOrderNum());
+        attributes.addFlashAttribute("orderNumMessage", ""+savedOrder.getOrderNum());
         String referer = request.getHeader("Referer");
         return "redirect:"+ referer;
     }
