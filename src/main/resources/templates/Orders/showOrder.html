@@ -357,21 +357,17 @@
     }
 </script>
     <script>
-        $(function(){
-            $(document).pos();
-            $(document).on('scan.pos.barcode', function(event){
-                console.log(event.code);
-            });
-            $(document).on('swipe.pos.card', function(event){
-                //access following:
-                // `event.card_number` - card number only
-                // `event.card_holder_first_name` - card holder first name only
-                // `event.card_holder_last_name` - card holder last name only
-                // `event.card_exp_date_month` - card expiration month - 2 digits
-                // `event.card_exp_date_year_2` - card expiration year - 2 digits
-                // `event.card_exp_date_year_4` - card expiration year - 4 digits
-                // `event.swipe_data` - original swipe data from raw processing or sending to a 3rd party service
-            });
+        // Global event listener for keydown events
+        document.addEventListener('keydown', function(event) {
+            const barcodeInput = document.getElementById('BarcodeInput');
+            if (barcodeInput) {
+                // Check if the input field is not focused
+                if (document.activeElement !== barcodeInput) {
+                    // Append scanned data to the input field
+                    barcodeInput.value += event.key;
+                    event.preventDefault(); // Prevent default key behavior
+                }
+            }
         });
     </script>
 </body>
