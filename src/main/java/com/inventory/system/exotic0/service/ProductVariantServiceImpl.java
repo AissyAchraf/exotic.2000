@@ -43,4 +43,9 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public List<ProductVariant> findAll() {
         return productVariantRepository.findAll();
     }
+
+    @Override
+    public ProductVariant getByBarcode(String barcode) {
+        return productVariantRepository.getByBarcode(barcode);
+    }
 }

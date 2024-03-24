@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -15,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 @Table(name = "orders")
-public class Order {
+public class Order implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +25,7 @@ public class Order {
     private int orderNum;
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.InProgress;
-    private Float totalAmount;
+    private Float totalAmount = 0F;
     @Enumerated(EnumType.STRING)
     private OrderType type = OrderType.Sale;
 }

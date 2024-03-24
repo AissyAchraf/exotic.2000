@@ -27,7 +27,7 @@
             </ol>
 
             <ol th:if="${orderNumMessage != null}" class="breadcrumb alert-secondary text-black">
-                <li class="breadcrumb-item"><strong th:text="${#numbers.formatInteger(order.orderNum, 4)}"></strong></li>
+                <li class="breadcrumb-item"><strong>Une nouvelle commande à été ajoutée avec le n° [[${#numbers.formatInteger(orderNumMessage, 4)}]]</strong></li>
             </ol>
 
             <div class="row">

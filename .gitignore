@@ -30,4 +30,4 @@ build/
 
 ### Project ###
 target/*
-
+src/main/resources/application.properties
